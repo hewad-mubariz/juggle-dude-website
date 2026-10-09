@@ -45,6 +45,17 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 - `/terms/`: adult eligibility, service terms, Apple’s standard EULA, and subscription information.
 - `/support/`: recording tips, local video history, account and subscription help, and contact details.
 - `/imprint/`: German operator/contact page; postal address remains unset until provided.
+- `/auth/email/`: email sign-in fallback when iOS does not open the installed app.
+
+## iPhone email links
+
+`/.well-known/apple-app-site-association` associates only `/auth/email/` and `/auth/email` with `G276PSQ2LH.com.juggledude`. Vercel serves this extensionless file as JSON without a redirect. The app must be signed with `applinks:juggledude.com` in its Associated Domains entitlement; Apple fetches and caches the association when the app is installed or updated.
+
+Supabase email buttons use `https://juggledude.com/auth/email/#token_hash={{ .TokenHash }}&type=magiclink` (or `type=signup` for signup confirmation). The iOS app verifies the token with Supabase and exchanges the result using its original PKCE verifier. This website never verifies a token or creates a session.
+
+The secret stays in the URL fragment, which browsers do not send to the web server. The fallback removes it from the visible browser history, validates it locally, and provides an explicit Open Juggle Dude button. It does not automatically trigger a custom scheme, make authentication requests, store the token, or run analytics. That fallback button may require the browser's app-opening confirmation; the primary Universal Link route is handled directly by iOS. Other pages and legal copy remain independent of sign-in.
+
+Run `npm run test:email-link` for malformed-token, duplicate-parameter, route and app-ID checks. Also verify the deployed AASA returns HTTP 200 with `Content-Type: application/json`, then test a fresh email on the updated iPhone. Email-client link wrappers and user browser preferences can still affect opening behavior.
 
 ## Launch settings
 

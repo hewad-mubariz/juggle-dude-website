@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "typecheck": "tsc --noEmit",
+    "test:email-link": "node --experimental-strip-types scripts/test-email-link.mjs",
     "preview": "node scripts/preview.mjs",
     "check:launch": "node scripts/check-launch.mjs"
   },

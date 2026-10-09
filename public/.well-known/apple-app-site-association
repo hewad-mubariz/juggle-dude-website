@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["G276PSQ2LH.com.juggledude"],
+        "components": [
+          { "/": "/auth/email/", "comment": "Juggle Dude email sign-in only" },
+          { "/": "/auth/email", "comment": "Accept the equivalent path without a trailing slash" }
+        ]
+      }
+    ]
+  }
+}
