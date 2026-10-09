@@ -29,8 +29,9 @@ The app uses Next.js App Router and exports static pages to `out/`. A static hos
 
 - `/`: approved Clubhouse design, football imagery, app features, and download section.
 - `/privacy/`: functionality-based privacy policy, clearly marked as a draft until approved.
-- `/terms/`: app usage, Apple’s standard EULA, and subscription information.
+- `/terms/`: adult eligibility, service terms, Apple’s standard EULA, and subscription information.
 - `/support/`: recording tips, local video history, account and subscription help, and contact details.
+- `/imprint/`: German operator/contact page; postal address remains unset until provided.
 
 ## Launch settings
 
@@ -39,12 +40,19 @@ Copy `.env.example` to `.env.local` and fill in the public settings. Rebuild aft
 | Setting | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Deployed HTTPS origin for sitemap and absolute metadata. |
-| `NEXT_PUBLIC_SUPPORT_EMAIL` | Real monitored support and privacy email. |
-| `NEXT_PUBLIC_OPERATOR_NAME` | Name of the person or business operating the app. |
+| `NEXT_PUBLIC_SUPPORT_EMAIL` | Proposed default: `hello@juggledude.com`; must be a real monitored mailbox. |
+| `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED` | Set `true` after verifying incoming email and monitoring. |
+| `NEXT_PUBLIC_OPERATOR_NAME` | Confirmed default: Hewad Mubariz, individual developer in Germany. |
+| `NEXT_PUBLIC_CONTACT_ADDRESS` | Legally suitable public postal address. No home address is inferred or published. |
+| `NEXT_PUBLIC_PROCESSING_DETAILS` | Verified providers, processing regions, and international-transfer arrangements. |
+| `NEXT_PUBLIC_RETENTION_DETAILS` | Verified retention periods/criteria, deletion timing, backup expiry, and legal exceptions. |
+| `NEXT_PUBLIC_DELETION_INSTRUCTIONS` | Actual tested in-app deletion process, scope, timing and confirmation. |
 | `NEXT_PUBLIC_APP_STORE_URL` | Live App Store listing. Leave empty until available. |
-| `NEXT_PUBLIC_PRIVACY_APPROVED` | Set `true` only after the draft has been reviewed and completed. Contact and operator details are also required to remove the draft notice. |
+| `NEXT_PUBLIC_PRIVACY_APPROVED` | Set `true` only after review. The confirmed mailbox, address, processing, retention and deletion settings are also required to remove policy/terms draft notices. This does not certify legal compliance or Apple approval. |
 
 Run `npm run check:launch` to identify unfinished launch settings. It intentionally fails with the placeholder defaults. Normal builds and CI still succeed with defaults so the design can be reviewed before release.
+
+All these values are public in the export, including an address configured through hosting environment variables. Never put secrets in them. Use quoted plain-language values for statements containing spaces; React renders them as text. For more detailed operational copy, edit the policy source and update the readiness checks together. Do not remove notices merely by filling fields with unverified plans.
 
 The existing Apple app ID is `6820780610`; the iOS project’s release notes currently say the app is preparing for submission. This website therefore defaults to **Coming soon**, without a fake download button. There is no Android availability claim.
 
@@ -52,7 +60,9 @@ The existing Apple app ID is `6820780610`; the iOS project’s release notes cur
 
 The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Supabase sign-in/profiles/avatars/results, optional leaderboard visibility, and Apple StoreKit subscriptions. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
 
-Before using the policy in App Store metadata, complete and review operator/contact details, legal bases, hosting and transfer arrangements, retention periods, account deletion procedure, and age-related requirements. The current iOS documentation does not implement an account-deletion endpoint; the website does not claim one exists. Link the app’s existing privacy buttons to the final public `/privacy/` URL after deployment.
+The confirmed audience is adults aged 18+. Before using the policy in App Store metadata, finish contact/address details, provider and transfer arrangements, retention schedules, account deletion, and release verification. The current iOS app has no account-deletion endpoint and its privacy links show placeholders. Policies describe these gaps honestly rather than inventing a working flow. No changes were made to the iOS app by this website update.
+
+See [App Store review notes](docs/apple-review.md) for source evidence, app changes needed before submission, a working privacy-label inventory, German imprint and Apple trader contact distinctions, and final URL setup. The draft pages are excluded from search indexing. The site still needs hosting on a public HTTPS domain before it can serve as an App Store policy URL.
 
 ## Images
 

@@ -7,10 +7,16 @@ function optionalHttpsUrl(value: string | undefined): string | null {
   return url.toString();
 }
 
-const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || null;
+const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "hello@juggledude.com";
 if (supportEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(supportEmail)) {
   throw new Error("NEXT_PUBLIC_SUPPORT_EMAIL must be a valid email address.");
 }
+
+const supportEmailConfirmed = process.env.NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED === "true";
+const contactAddress = process.env.NEXT_PUBLIC_CONTACT_ADDRESS?.trim() || null;
+const processingDetails = process.env.NEXT_PUBLIC_PROCESSING_DETAILS?.trim() || null;
+const retentionDetails = process.env.NEXT_PUBLIC_RETENTION_DETAILS?.trim() || null;
+const deletionInstructions = process.env.NEXT_PUBLIC_DELETION_INSTRUCTIONS?.trim() || null;
 
 export const site = {
   name: "Juggle Dude",
@@ -18,8 +24,15 @@ export const site = {
   url: optionalHttpsUrl(process.env.NEXT_PUBLIC_SITE_URL),
   appStoreUrl: optionalHttpsUrl(process.env.NEXT_PUBLIC_APP_STORE_URL),
   supportEmail,
-  operatorName: process.env.NEXT_PUBLIC_OPERATOR_NAME?.trim() || null,
-  privacyApproved: process.env.NEXT_PUBLIC_PRIVACY_APPROVED === "true" && Boolean(supportEmail && process.env.NEXT_PUBLIC_OPERATOR_NAME?.trim()),
+  operatorName: process.env.NEXT_PUBLIC_OPERATOR_NAME?.trim() || "Hewad Mubariz",
+  operatorCountry: "Germany",
+  minimumAge: 18,
+  supportEmailConfirmed,
+  contactAddress,
+  processingDetails,
+  retentionDetails,
+  deletionInstructions,
+  privacyApproved: process.env.NEXT_PUBLIC_PRIVACY_APPROVED === "true" && supportEmailConfirmed && Boolean(contactAddress && processingDetails && retentionDetails && deletionInstructions),
   policyDate: "9 October 2026",
   appleEulaUrl: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
 };

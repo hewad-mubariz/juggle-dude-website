@@ -9,6 +9,7 @@ export function SiteFooter() {
           <Link href="/privacy/" className="hover:text-ink">Privacy policy</Link>
           <Link href="/terms/" className="hover:text-ink">Terms</Link>
           <Link href="/support/" className="hover:text-ink">Support</Link>
+          <Link href="/imprint/" className="hover:text-ink">Impressum</Link>
         </nav>
       </div>
     </footer>
