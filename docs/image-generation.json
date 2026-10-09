@@ -1,0 +1,12 @@
+{
+  "generator": "built-in image_gen",
+  "hero": {
+    "asset": "public/images/juggling-hero.jpg",
+    "prompt": "Use case: photorealistic-natural. Asset type: football app website hero photograph. Primary request: authentic casual football juggling, a young adult male in a plain charcoal t-shirt, warm cream athletic shorts and white socks juggling a classic black and white football with his foot on an empty neighborhood outdoor football court. Portrait 2:3 composition, entire body including feet and floating ball clearly visible, player slightly to the right, natural real anatomy and plausible contact pose. Late afternoon sunlight, muted sage green chainlink fence and trees in the background, concrete court, film-like natural grain and warm editorial photography. Feels like a fun Sunday kickabout, approachable and unpretentious. No sponsor logos, no text, no watermarks, no UI, no collage. Save the generated output locally and return its file path."
+  },
+  "detail": {
+    "asset": "public/images/juggling-detail.jpg",
+    "prompt": "Use case: photorealistic-natural. Asset type: football app website secondary landscape photograph. Primary request: low-angle close-up editorial photograph of a white football with dark panels suspended just above a white trainer during a casual juggling session. Only lower legs of an adult player visible, white socks, cream shorts. Warm sunlit small neighborhood football court with muted green fence and blurry trees. Landscape 3:2 composition. Realistic foot, ball and leg proportions; relaxed authentic football practice, tactile scuffed ball, gentle film grain, natural warm daylight. No brands, no logos, no lettering, no watermark, no UI, no collage. Save the generated output locally and return its file path."
+  },
+  "notes": "Optimised JPEG copies of the approved generated photographs for the Juggle Dude website. Original generated PNGs remain in the original local project assets."
+}

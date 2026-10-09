@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-dm-sans);
+  --font-display: var(--font-barlow-condensed);
+  --color-paper: #f3f4ed;
+  --color-ink: #171f1b;
+  --color-muted: #596259;
+  --color-pitch: #4a6623;
+  --color-lime: #d0f852;
+  --color-line: #dce0d8;
+  --color-soft: #e4e9dc;
+}
+
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body { background: var(--color-paper); color: var(--color-ink); }
+::selection { background: var(--color-lime); color: var(--color-ink); }
+button, a { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible, summary:focus-visible { outline: 3px solid var(--color-pitch); outline-offset: 5px; border-radius: 3px; }
+
+@layer components {
+  .site-container { @apply mx-auto w-[89%] max-w-300; }
+  .button-lime { @apply inline-flex min-h-12 items-center justify-center rounded-lg bg-lime px-6 py-3 text-center text-base leading-snug font-bold text-ink transition-colors hover:bg-[#bedf49]; }
+  .store-badge { @apply inline-flex min-h-15 items-center gap-3 rounded-lg bg-ink px-6 py-3 text-paper transition-colors hover:bg-pitch; }
+  .eyebrow { @apply text-xs leading-relaxed font-semibold tracking-[0.16em] uppercase; }
+  .prose-content { @apply text-base leading-[1.8]; }
+  .prose-content h2 { @apply mt-10 mb-3 text-xl leading-snug font-bold tracking-tight; }
+  .prose-content h3 { @apply mt-7 mb-2 text-lg font-bold; }
+  .prose-content p { @apply my-4 text-muted; }
+  .prose-content ul { @apply my-4 list-disc space-y-2 pl-6 text-muted; }
+  .prose-content a { @apply text-pitch underline underline-offset-4; }
+  .prose-content .notice { @apply rounded-xl border border-line bg-soft p-5; }
+  .prose-content .notice p { @apply my-0 text-ink; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
