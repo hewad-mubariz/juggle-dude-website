@@ -75,8 +75,8 @@ export default function Privacy() {
       <p>You can edit your profile, turn public sharing off, use guest mode, and manage camera and Photos permissions. Under applicable data-protection law, you may request access, correction, erasure, restriction, or a portable copy of your information. You may object to processing based on legitimate interests and withdraw consent at any time.</p>
       <p>Send a request to <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>. We may need proportionate information to verify account ownership; do not send passwords or sign-in codes. GDPR requests are normally answered within one month, with notice if a lawful extension is needed. You may complain to a data-protection supervisory authority, including the authority for the German state where you live or work. These rights can be subject to legal exceptions.</p>
 
-      <h2>12. Adults only</h2>
-      <p>Juggle Dude is intended for people aged {site.minimumAge} or older. Accounts are not offered to children. If you believe someone under {site.minimumAge} has provided account information, contact us so we can investigate and arrange appropriate removal.</p>
+      <h2>12. Account eligibility</h2>
+      <p>Our <Link href="/terms/">terms of use</Link> explain who may use Juggle Dude and create an account. If you believe someone who does not meet those requirements has provided account information, contact us so we can investigate and arrange appropriate removal.</p>
 
       <h2>13. This website and policy updates</h2>
       <p>This website has no advertising, analytics trackers, or marketing cookies. Fonts and images are served with the site. Its host receives network information to deliver pages and may keep security logs; those arrangements are covered in the processing and retention details above. Your email provider and ours process messages when you contact support.</p>

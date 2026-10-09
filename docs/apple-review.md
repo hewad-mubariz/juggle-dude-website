@@ -1,6 +1,6 @@
 # Juggle Dude policy and App Store review notes
 
-Reviewed 9 October 2026 against the current iOS source in the sibling `kicklab` project. This is a release preparation document, not a guarantee of approval. The website drafts match the observed implementation and the developer's confirmed adult-only audience. No iOS or production-backend changes were made for this website update.
+Reviewed 9 October 2026 against the current iOS source in the sibling `kicklab` project. This is a release preparation document, not a guarantee of approval. The website drafts match the observed implementation. Marketing and privacy copy use neutral wording; the service terms retain the current eligibility rule. No iOS or production-backend changes were made for this website update.
 
 ## Confirmed operator details and unfinished publication details
 
@@ -33,7 +33,7 @@ Paths in this table are relative to the iOS project (`kicklab/` for Swift files)
 2. **Legal links:** replace placeholder privacy/terms alerts with the deployed HTTPS policy and service-terms URLs. Keep Apple's standard EULA for the software licence. Provide policy links in account and purchase screens and an accessible settings location. [Apple standard EULA](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)
 3. **Public profiles:** names and avatars are user-controlled public content. Implement filtering, reporting, blocking, and a response process, or omit public profiles from the release until appropriately handled. A support email alone does not implement these controls.
 4. **Purchases:** finish and test the Pro benefits advertised by the paywall. Verify purchase, cancellation, restoration and expiry on device, with clear price, period, renewal terms, and actual ongoing value.
-5. **Adult eligibility:** enforce the chosen 18+ account/product rules in the app. Complete Apple's age-rating questionnaire accurately and align availability with the intended audience; terms do not substitute for that configuration.
+5. **Account eligibility:** enforce the current 18+ account/product rules in the app, or review the safeguards and update the terms if a younger audience is chosen. Complete Apple's age-rating questionnaire accurately and align availability with the intended audience; neutral website wording and terms do not substitute for that configuration.
 
 Items 2–5 are informed by the [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/) (1.2, 1.5, 2.1, 2.3, 3.1.2 and 5.1.1). These observations are specific implementation gaps, not an exhaustive review audit.
 
