@@ -25,6 +25,19 @@ Open `http://localhost:4173`. `npm run preview -- 4200` selects a different port
 
 The app uses Next.js App Router and exports static pages to `out/`. A static host can serve that directory; Vercel can import this repository directly. Preserve directory index routing and use `404.html` for missing routes. The fonts are bundled by `next/font`, and generated photographs are local assets, so visitors do not need third-party font or image requests.
 
+## Production hosting
+
+The existing [Vercel project](https://vercel.com/hewad-finosucoms-projects/juggle-dude-website-8zwx) is connected to this repository's `main` branch. The primary website address is **https://juggledude.com**; `www.juggledude.com` redirects to it with HTTP 308. Production has `NEXT_PUBLIC_SITE_URL=https://juggledude.com` configured in Vercel and was rebuilt after that setting was added.
+
+DNS remains managed at GoDaddy. The project-specific records confirmed on 9 October 2026 are:
+
+| Type | Name | Value | TTL |
+| --- | --- | --- | --- |
+| A | `@` | `216.198.79.1` | 600 seconds |
+| CNAME | `www` | `71e42daa1f6e19d2.vercel-dns-017.com.` | 1 hour |
+
+Use the current Vercel Domains dashboard when making future changes; these targets can change. Nameservers and unrelated DNS records were preserved. Vercel manages the site's HTTPS certificates. Domain purchase and website hosting do not create the proposed support mailbox; email delivery still needs separate setup and verification.
+
 ## Pages
 
 - `/`: approved Clubhouse design, football imagery, app features, and download section.
@@ -70,6 +83,6 @@ The approved generated football photographs are in `public/images/`. The built-i
 
 ## CI
 
-GitHub Actions installs from the committed lockfile, checks TypeScript, and builds the static website on pushes and pull requests. No hosting deployment or paid service is configured.
+GitHub Actions installs from the committed lockfile, checks TypeScript, and builds the static website on pushes and pull requests. Vercel's existing GitHub integration handles production deployment independently of this workflow. No paid plan or additional service was purchased by this setup.
 
 Reference implementation guidance: [Next.js static exports](https://nextjs.org/docs/app/guides/static-exports) and [Tailwind CSS with Next.js](https://tailwindcss.com/docs/installation/framework-guides/nextjs).
