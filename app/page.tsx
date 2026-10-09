@@ -26,8 +26,8 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="bg-lime text-ink">
-        <div className="site-container flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-5 text-xs leading-relaxed font-bold tracking-[0.08em] uppercase sm:justify-around sm:text-sm">
+      <div className="site-container">
+        <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3 rounded-2xl bg-lime px-6 py-5 text-xs leading-relaxed font-bold tracking-[0.08em] text-ink uppercase sm:justify-around sm:px-9 sm:text-sm">
           <span>Count your touches</span><span>Watch it back</span><span>Make it yours</span>
         </div>
       </div>
