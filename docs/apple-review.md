@@ -9,7 +9,7 @@ Updated 10 October 2026 against the current iOS source in the sibling `kicklab` 
 - Support/privacy contact: **hello@juggledude.com**, confirmed functional by the operator on 10 October 2026. The default mailbox is marked confirmed; any replacement needs its own confirmation.
 - The full postal address supplied by the operator for publication on 10 October 2026 is included in the Impressum, using the default in `lib/site.ts`. `NEXT_PUBLIC_CONTACT_ADDRESS` can override it when needed. All `NEXT_PUBLIC_*` values become public in the generated website.
 - Production dashboards confirmed Supabase **West EU (Ireland), eu-west-1**, on the Free plan, and Vercel website hosting. Amazon SES support receiving uses **Europe (Stockholm), eu-north-1**, S3 storage and Lambda forwarding to Gmail. The receipt rule explicitly includes `hello@juggledude.com`.
-- The S3 message bucket has enabled 30-day expiry; the forwarding Lambda's CloudWatch log group has 30-day retention. These settings do not delete Gmail copies. The forwarded-mail retention practice is awaiting operator confirmation.
+- The S3 message bucket has enabled 30-day expiry; the forwarding Lambda's CloudWatch log group has 30-day retention. These settings do not delete Gmail copies. On 10 October 2026, the operator adopted deletion of resolved Gmail support conversations and attachments within 90 days, with necessary legal-obligation/claim exceptions. This is a manual operating commitment, not an automated Gmail setting or a statutory 90-day deadline.
 - Supabase's dashboard has **Write audit logs to the database disabled** and no scheduled project backups on the current plan. Its current [pricing information](https://supabase.com/pricing) lists one day for API/database logs and one hour for Auth audit logs. Do not treat these published log periods as proof of immediate erasure of every internal provider copy or pre-existing database audit entry.
 - Applicable provider processor/transfer arrangements, hosting/security-log and recovery-copy retention, and any separate legal-retention exceptions still need confirmation. European project locations are not proof of EU-only processing.
 
@@ -61,6 +61,15 @@ On-device video/body analysis and StoreKit entitlement checks are distinct from 
 
 ## Finish the policy operational details
 
+### Support-mail routine adopted 10 October 2026
+
+- Record when a support request is resolved, for example with a Resolved label and a resolution date in the support tracking record. Retention runs from resolution, not the original email date.
+- Review resolved conversations weekly. Delete each conversation and its attachments within 90 days of resolution, including copies in Trash; moving to Trash alone can leave a recoverable copy beyond the published deadline. See [Google's Gmail deletion instructions](https://support.google.com/mail/answer/7401?hl=en). Do not keep separate downloaded attachment copies beyond the same deadline.
+- Keep genuinely open requests while needed. For a legal obligation or claim exception, record the reason, retain only the necessary correspondence, and set a review date or trigger. Delete when the justified need ends; apply an actual statutory period where required.
+- No existing emails were deleted and no mailbox automation was configured by this website change. The operator must perform this routine unless a separately tested process is introduced.
+
+### Remaining provider and retention review
+
 Confirm the following and write plain-language statements into the matching environment fields or policy source:
 
 - `NEXT_PUBLIC_PROCESSING_DETAILS`: optional override of the verified provider/region defaults in `lib/site.ts`. Confirm applicable processor agreements and international-transfer safeguards for the actual setup, including the forwarded Gmail mailbox. Review [Supabase’s DPA](https://supabase.com/legal/customer-resources/data-processing-addendum), [Vercel’s DPA](https://vercel.com/legal/dpa) and [Google’s transfer-framework information](https://policies.google.com/privacy/frameworks); public provider documents alone do not prove every required arrangement for this operator is in place.
@@ -69,7 +78,7 @@ Confirm the following and write plain-language statements into the matching envi
 - `NEXT_PUBLIC_CONTACT_ADDRESS`: a suitable public postal address, currently supplied by the operator. Keep the address and mailbox current; confirm any replacement mailbox before setting `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED=true`.
 - Review contract, consent and legitimate-interest bases against actual operation, including public-profile consent and its withdrawal, security balancing, and minimisation. Review [GDPR Articles 6, 12–14 and 15–22](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679).
 
-Use `NEXT_PUBLIC_PRIVACY_APPROVED=true` only after those details and the app behaviour have been checked. The flag removes the remaining privacy review notice when required settings are present; terms and imprint publication now depend on confirmed operator details separately. it is not a legal certification. Consider qualified German legal review of the final public address, consumer terms and privacy arrangements.
+Use `NEXT_PUBLIC_PRIVACY_APPROVED=true` only after those details and the app behaviour have been checked. The flag removes the remaining privacy review notice when required settings are present; terms and imprint publication now depend on confirmed operator details separately. It is not a legal certification. Consider qualified German legal review of the final public address, consumer terms and privacy arrangements.
 
 ## URLs and review information
 

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function Privacy() {
   return (
     <ContentPage eyebrow={`Last updated ${site.policyDate}`} title="Privacy policy" intro="Your training videos are analysed on your phone. If you create an account, we store your profile and training results so you can use them across devices.">
-      {!site.privacyApproved && <aside className="notice" aria-label="Privacy publication status"><p><strong>Privacy details being finalised.</strong> The operator contact details, provider locations, and in-app account-deletion process are documented below. The remaining review covers {!site.supportEmailConfirmed && "the contact mailbox, "}support-mail and hosting-log retention, and the applicable provider data-protection and international-transfer arrangements.</p></aside>}
+      {!site.privacyApproved && <aside className="notice" aria-label="Privacy publication status"><p><strong>Privacy details being finalised.</strong> The operator contact details, provider locations, support-mail retention rule, and in-app account-deletion process are documented below. The remaining review covers {!site.supportEmailConfirmed && "the contact mailbox, "}hosting-log and provider recovery-copy retention, and the applicable provider data-protection and international-transfer arrangements.</p></aside>}
 
       <h2>1. Who is responsible</h2>
       <p>Juggle Dude is operated by {site.operatorName}, an individual developer based in {site.operatorCity}, {site.operatorCountry}, who is the controller of the personal information described here. This policy covers the iPhone app and this website.</p>
@@ -63,14 +63,15 @@ export default function Privacy() {
       <p>The app uses HTTPS for account requests, stores sign-in tokens in the iOS Keychain, and restricts account records to the signed-in owner, except for the public profile information you choose to share. No storage or transmission system can be guaranteed completely secure.</p>
       <p>We may disclose necessary information when legally required, or to establish, exercise, or defend legal claims. We do not give other users access to your private account history.</p>
 
-      <h2>9. How long information is kept</h2>
+      <h2 id="retention">9. How long information is kept</h2>
       <p>Local replay videos remain until you remove them or the app’s local storage is erased; they are not automatically evicted. Removing a replay in History removes the app’s local video, not its cloud result or a copy saved to Photos. Guest data remains local. Cloud account records are kept to provide your account until deletion, subject to necessary legal retention.</p>
+      <p><strong>Support conversations:</strong> we delete resolved support emails and attachments from our Gmail mailbox within {site.supportRetentionDays} days after your request is resolved. Messages needed to handle an ongoing request are kept while that request remains open. Where particular correspondence is necessary to comply with a legal obligation or establish, exercise, or defend a legal claim, we retain only what is needed for that purpose and delete it when that need ends.</p>
       <ul>
         <li><strong>Temporary received email:</strong> the S3 receiving bucket is configured to expire message copies after 30 days. Mail-forwarding logs in AWS CloudWatch also have a 30-day retention setting. These settings do not delete the forwarded Gmail conversation.</li>
         <li><strong>Account-service logs:</strong> the current Supabase Free plan lists one day of API/database log retention and one hour of Auth audit-log retention. Writing additional Auth audit logs into the account database is disabled.</li>
         <li><strong>Project backups:</strong> the current Supabase plan does not include scheduled project backups. This is separate from a provider’s internal infrastructure recovery arrangements and does not mean every provider copy is erased immediately.</li>
       </ul>
-      {site.retentionDetails ? <p className="whitespace-pre-line">{site.retentionDetails}</p> : <aside className="notice"><p><strong>Remaining retention review:</strong> the retention rules for forwarded support conversations, website-host security logs, and any separately retained legal records or provider recovery copies are still being confirmed. We do not yet promise a fixed expiry period for those categories.</p></aside>}
+      {site.retentionDetails ? <p className="whitespace-pre-line">{site.retentionDetails}</p> : <aside className="notice"><p><strong>Remaining retention review:</strong> retention of website-host security logs, provider recovery copies, and any specific statutory recordkeeping periods are still being confirmed. We do not yet promise a fixed expiry period for those categories.</p></aside>}
 
       <h2 id="account-deletion">10. Removing your account</h2>
       <p className="whitespace-pre-line">{site.deletionInstructions}</p>

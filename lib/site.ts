@@ -33,6 +33,8 @@ export const site = {
   operatorCountry: "Germany",
   minimumAge: 18,
   supportEmailConfirmed,
+  // Operator adopted this manual support-mail routine on 10 October 2026.
+  supportRetentionDays: 90,
   contactAddress,
   processingDetails,
   retentionDetails,
