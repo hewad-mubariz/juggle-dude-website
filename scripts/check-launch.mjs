@@ -2,10 +2,9 @@ import nextEnv from "@next/env";
 
 nextEnv.loadEnvConfig(process.cwd());
 
-// Verified processing locations and deletion instructions have defaults in lib/site.ts.
+// Processing locations, retention criteria and deletion instructions have defaults in lib/site.ts.
 const required = [
   "NEXT_PUBLIC_SITE_URL",
-  "NEXT_PUBLIC_RETENTION_DETAILS",
   "NEXT_PUBLIC_APP_STORE_URL",
 ];
 const problems = [];

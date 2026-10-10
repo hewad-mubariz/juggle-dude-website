@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 export default function Privacy() {
   return (
     <ContentPage eyebrow={`Last updated ${site.policyDate}`} title="Privacy policy" intro="Your training videos are analysed on your phone. If you create an account, we store your profile and training results so you can use them across devices.">
-      {!site.privacyApproved && <aside className="notice" aria-label="Privacy publication status"><p><strong>Privacy details being finalised.</strong> The operator contact details, provider locations, support-mail retention rule, and in-app account-deletion process are documented below. The remaining review covers {!site.supportEmailConfirmed && "the contact mailbox, "}hosting-log and provider recovery-copy retention, and the applicable provider data-protection and international-transfer arrangements.</p></aside>}
 
       <h2>1. Who is responsible</h2>
       <p>Juggle Dude is operated by {site.operatorName}, an individual developer based in {site.operatorCity}, {site.operatorCountry}, who is the controller of the personal information described here. This policy covers the iPhone app and this website.</p>
@@ -71,7 +70,9 @@ export default function Privacy() {
         <li><strong>Account-service logs:</strong> the current Supabase Free plan lists one day of API/database log retention and one hour of Auth audit-log retention. Writing additional Auth audit logs into the account database is disabled.</li>
         <li><strong>Project backups:</strong> the current Supabase plan does not include scheduled project backups. This is separate from a provider’s internal infrastructure recovery arrangements and does not mean every provider copy is erased immediately.</li>
       </ul>
-      {site.retentionDetails ? <p className="whitespace-pre-line">{site.retentionDetails}</p> : <aside className="notice"><p><strong>Remaining retention review:</strong> retention of website-host security logs, provider recovery copies, and any specific statutory recordkeeping periods are still being confirmed. We do not yet promise a fixed expiry period for those categories.</p></aside>}
+      <p className="whitespace-pre-line">{site.retentionDetails}</p>
+      <p>See <a href="https://vercel.com/legal/privacy-notice">Vercel’s retention information</a> for its provider-managed records. We do not maintain a separate website visitor analytics database.</p>
+      <p><strong>Deletion from provider systems:</strong> removing information from an active account or mailbox does not necessarily erase every provider copy immediately. Google states that its deletion process generally takes around two months and that encrypted backup copies can remain for up to six months, with possible delays. This is separate from our {site.supportRetentionDays}-day deadline to delete a resolved support conversation from our mailbox. See <a href="https://policies.google.com/technologies/retention">Google’s retention and deletion information</a>. Account-service deletion is described below; our current Supabase plan’s project-backup setting is described above.</p>
 
       <h2 id="account-deletion">10. Removing your account</h2>
       <p className="whitespace-pre-line">{site.deletionInstructions}</p>

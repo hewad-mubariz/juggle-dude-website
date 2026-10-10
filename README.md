@@ -41,7 +41,7 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 ## Pages
 
 - `/`: approved Clubhouse design, football imagery, app features, and download section.
-- `/privacy/`: functionality-based privacy policy with verified providers and deletion instructions; remaining retention and provider-arrangement review is identified.
+- `/privacy/`: functionality-based privacy policy with verified provider details, retention criteria, and deletion instructions. Internal review reminders are kept in `docs/apple-review.md`.
 - `/terms/`: adult eligibility, service terms, Apple’s standard EULA, and subscription information.
 - `/support/`: recording tips, local video history, account and subscription help, and contact details.
 - `/imprint/`: German operator/contact page with the operator's supplied postal address.
@@ -69,12 +69,12 @@ Copy `.env.example` to `.env.local` and fill in the public settings. Rebuild aft
 | `NEXT_PUBLIC_OPERATOR_NAME` | Confirmed default: Hewad Mubariz, individual developer in Mainz, Germany. |
 | `NEXT_PUBLIC_CONTACT_ADDRESS` | Optional public postal-address override; defaults to the address supplied for publication by the operator. |
 | `NEXT_PUBLIC_PROCESSING_DETAILS` | Optional override of verified providers/regions in source. Review applicable processor and transfer arrangements before final approval. |
-| `NEXT_PUBLIC_RETENTION_DETAILS` | Verified retention periods/criteria, deletion timing, backup expiry, and legal exceptions. |
+| `NEXT_PUBLIC_RETENTION_DETAILS` | Optional override of provider-managed retention criteria in source; configured account/email periods and the adopted support rule are also documented in the policy. |
 | `NEXT_PUBLIC_DELETION_INSTRUCTIONS` | Optional override of the implemented Profile → Delete account instructions. |
 | `NEXT_PUBLIC_APP_STORE_URL` | Live App Store listing. Leave empty until available. |
-| `NEXT_PUBLIC_PRIVACY_APPROVED` | Set `true` only after review. The confirmed mailbox, address, processing, retention and deletion settings are also required to remove the remaining privacy review notice. This does not certify legal compliance or Apple approval. |
+| `NEXT_PUBLIC_PRIVACY_APPROVED` | Set `true` only after review. The confirmed mailbox, address, processing, retention and deletion details are also required to enable privacy-page indexing. This is an internal publication check; it does not insert public review banners. This does not certify legal compliance or Apple approval. |
 
-Run `npm run check:launch` to identify unfinished launch settings. It identifies unfinished privacy approval/retention and App Store listing settings. Verified provider and deletion defaults no longer require environment placeholders. An unavailable App Store listing does not prevent hosting the legal pages. Normal builds and CI still succeed with defaults so the design can be reviewed before release.
+Run `npm run check:launch` to identify unfinished launch settings. It identifies unfinished internal privacy approval and App Store listing settings. Provider locations, retention criteria and deletion instructions have source defaults and no longer require environment placeholders. An unavailable App Store listing does not prevent hosting the legal pages. Normal builds and CI still succeed with defaults so the design can be reviewed before release.
 
 All these values are public in the export, including an address configured through hosting environment variables. Never put secrets in them. Use quoted plain-language values for statements containing spaces; React renders them as text. For more detailed operational copy, edit the policy source and update the readiness checks together. Do not remove notices merely by filling fields with unverified plans.
 
@@ -90,7 +90,9 @@ The 10 October 2026 audit confirmed Supabase in Ireland, Vercel hosting, SES sup
 
 Account deletion and live legal links are implemented in the iOS app. The shared website instructions now describe Profile → Delete account, Apple reauthorisation where needed, server confirmation, and local cleanup. The app's deletion notes still require a successful real-device test with a disposable account and Apple revocation before submission. No iOS or backend changes were made for this website update.
 
-On 10 October 2026, the operator adopted a manual rule to delete resolved Gmail support conversations and attachments within 90 days of resolution, with necessary legal-obligation/claim exceptions. The practical review/deletion routine is recorded in `docs/apple-review.md`; no mailbox automation or email deletion was performed. The privacy policy still identifies a narrower review of hosting/security-log and recovery-copy retention, applicable statutory recordkeeping periods, and applicable processor/transfer arrangements. Keep that notice until these practices are confirmed; do not approve by inserting invented durations. See [App Store review notes](docs/apple-review.md) for the updated evidence and remaining release checks. The site is already available on the public HTTPS domain; only the pending privacy page remains excluded from search indexing.
+On 10 October 2026, the operator adopted a manual rule to delete resolved Gmail support conversations and attachments within 90 days of resolution, with necessary legal-obligation/claim exceptions. The practical review/deletion routine is recorded in `docs/apple-review.md`; no mailbox automation or email deletion was performed. The public privacy page now explains provider-managed retention using the providers' published criteria, without internal draft or review notices. Vercel's own service-generated information follows its published purpose-based retention policy. Google's deletion process and possible encrypted backup retention are attributed to Google, rather than treated as a deadline for every provider. No universal immediate-purge or fixed recovery-copy expiry is promised.
+
+Provider processor/transfer arrangements and final app release checks remain in [App Store review notes](docs/apple-review.md). `NEXT_PUBLIC_PRIVACY_APPROVED` remains an internal approval/indexing flag; removing a public reminder does not approve those operational checks. The policy remains accessible at its public HTTPS URL even while search indexing is disabled.
 
 ## Images
 
