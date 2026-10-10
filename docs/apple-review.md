@@ -7,7 +7,7 @@ Updated 10 October 2026 against the current iOS source in the sibling `kicklab` 
 - Operator: **Hewad Mubariz**, individual developer based in **Mainz, Germany** (city confirmed 10 October 2026).
 - Release sign-in choices: **Sign in with Apple and guest practice**, confirmed by the operator and the commented-out Google/email controls in `Account/SignInView.swift` on 10 October 2026. Legacy methods and development email-link support remain in code; no backend-provider configuration was changed by this website update.
 - Release features: **leaderboards and public-profile sharing are deferred from the first launch**, confirmed by the operator on 10 October 2026. The Home entry and profile-sharing control are commented out in the app. Legacy backend and visibility code remain; this website update does not disable RPCs or change existing account settings. Verify that production records and access match the intended release before submission.
-- Minimum age: **18**. This is a product decision; the current sign-in flow does not yet enforce it.
+- Minimum age: **13** for accounts and analytics, with parent or guardian permission under 16 (changed from 18+ on 11 October 2026). Guest practice is open to everyone. The sign-in flow does not ask for age; the terms and policy carry the rule.
 - Support/privacy contact: **hello@juggledude.com**, confirmed functional by the operator on 10 October 2026. The default mailbox is marked confirmed; any replacement needs its own confirmation.
 - The full postal address supplied by the operator for publication on 10 October 2026 is included in the Impressum, using the default in `lib/site.ts`. `NEXT_PUBLIC_CONTACT_ADDRESS` can override it when needed. All `NEXT_PUBLIC_*` values become public in the generated website.
 - Production dashboards confirmed Supabase **West EU (Ireland), eu-west-1**, on the Free plan, and Vercel website hosting. Amazon SES support receiving uses **Europe (Stockholm), eu-north-1**, S3 storage and Lambda forwarding to Gmail. The receipt rule explicitly includes `hello@juggledude.com`.
@@ -39,7 +39,7 @@ Paths in this table are relative to the iOS project (`kicklab/` for Swift files)
 2. **Legal links — implemented:** the sign-in/paywall links open `https://juggledude.com/privacy/` and `/terms/`. The website is already hosted on HTTPS. Keep Apple's standard EULA for the software licence. Verify the final submitted build, settings access and App Store Connect URLs. [Apple standard EULA](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)
 3. **Deferred leaderboards/public profiles:** confirm the submitted build omits the leaderboard entry and sharing control, and verify that existing visibility flags and production public endpoints do not expose profiles contrary to the first-launch scope. Before enabling these features later, update the public policy and terms and implement appropriate filtering, reporting, blocking, and a response process. A support email alone does not implement those controls.
 4. **Purchases:** finish and test the Pro benefits advertised by the paywall. Verify purchase, cancellation, restoration and expiry on device, with clear price, period, renewal terms, and actual ongoing value.
-5. **Account eligibility:** enforce the current 18+ account/product rules in the app, or review the safeguards and update the terms if a younger audience is chosen. Complete Apple's age-rating questionnaire accurately and align availability with the intended audience; neutral website wording and terms do not substitute for that configuration.
+5. **Account eligibility:** the terms now allow accounts from 13, with parental permission under 16. Answer the age-rating questionnaire for the content (likely 4+); the account age rule lives in the terms. Complete Apple's age-rating questionnaire accurately and align availability with the intended audience; neutral website wording and terms do not substitute for that configuration.
 
 Items 2–5 are informed by the [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/) (1.2, 1.5, 2.1, 2.3, 3.1.2 and 5.1.1). These observations are specific implementation gaps, not an exhaustive review audit.
 
@@ -58,9 +58,11 @@ This app should not be declared **Data Not Collected** while cloud accounts are 
 | Session source, time, app/counter version, result identifiers/status | Confirm appropriate Usage Data or Other Data category | Linked; training-history functionality |
 | Optional selected country | Assess Coarse Location if it represents user location, otherwise Other Data as appropriate | Linked; account-profile functionality; no GPS collection |
 | Authentication/security logs, IP addresses, and any retained purchase records | Inspect production collection and actual purpose before assigning categories | Provider retention and identity linkage need verification |
+| Optional PostHog usage events (opt-in, off by default): feature use, success/failure outcomes, rounded durations, chosen effect/plan | Product Interaction | Not linked to identity (random installation ID, no account ID); Analytics; not tracking |
+| PostHog random installation identifier | Device ID, unless Apple's current definitions point elsewhere | Not linked; Analytics; not tracking. Opt-in collection still needs declaring: it doesn't meet Apple's optional-disclosure exception |
 | Support messages/attachments | Customer Support or other relevant category, if within reporting scope | Review actual support flow and any optional-disclosure exception |
 
-On-device video/body analysis and StoreKit entitlement checks are distinct from uploaded profile photos and session records. Apple-only payment processing is distinct from developer-retained transaction data. No advertising tracking was observed. These are findings from source, not final App Store Connect answers. [Apple privacy definitions](https://developer.apple.com/app-store/app-privacy-details/)
+On-device video/body analysis and StoreKit entitlement checks are distinct from uploaded profile photos and session records. Apple-only payment processing is distinct from developer-retained transaction data. No advertising tracking was observed. Optional PostHog analytics are disclosed in privacy policy section 5 as of 11 October 2026. These are findings from source, not final App Store Connect answers. [Apple privacy definitions](https://developer.apple.com/app-store/app-privacy-details/)
 
 ## Finish the policy operational details
 
@@ -75,8 +77,6 @@ On-device video/body analysis and StoreKit entitlement checks are distinct from 
 
 Confirm the following and write plain-language statements into the matching environment fields or policy source:
 
-- `NEXT_PUBLIC_PROCESSING_DETAILS`: optional override of the verified provider/region defaults in `lib/site.ts`. Confirm applicable processor agreements and international-transfer safeguards for the actual setup, including the forwarded Gmail mailbox. Review [Supabase’s DPA](https://supabase.com/legal/customer-resources/data-processing-addendum), [Vercel’s DPA](https://vercel.com/legal/dpa) and [Google’s transfer-framework information](https://policies.google.com/privacy/frameworks); public provider documents alone do not prove every required arrangement for this operator is in place.
-- `NEXT_PUBLIC_RETENTION_DETAILS`: optional override of the provider-managed retention criteria in source. Preserve the adopted support deadline and configured account/email log periods. Keep these facts current when changing plans or providers; do not apply Google backup timing to other providers. Apply an actual statutory retention period only when the operator retains a record subject to it.
 - `NEXT_PUBLIC_DELETION_INSTRUCTIONS`: optional override of the implemented deletion instructions in source. The remaining live deletion/revocation test is an app submission check, not a missing website setting.
 - `NEXT_PUBLIC_CONTACT_ADDRESS`: a suitable public postal address, currently supplied by the operator. Keep the address and mailbox current; confirm any replacement mailbox before setting `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED=true`.
 - Review contract, consent and legitimate-interest bases against actual operation, including account functionality, security balancing, and minimisation. Review public-profile consent and withdrawal before enabling the deferred sharing features. Review [GDPR Articles 6, 12–14 and 15–22](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679).
@@ -97,3 +97,8 @@ After deployment, use the actual public origin:
 Keep `/terms/` and `/imprint/` accessible through the website and relevant app links. A localhost link or GitHub source-file URL is not the hosted policy. Privacy-choice text is not a substitute for working account deletion.
 
 Before submitting, verify pages on the live domain without login, verify that the public policy matches operation, match metadata to the actual app, and provide App Review with working access and accurate instructions for account deletion and subscription restoration; confirm the deferred leaderboard is absent from the submitted build. Do not give Apple fictional credentials or claim these flows work before testing them.
+
+
+## Provider naming in the public policy
+
+Since 11 October 2026 the public privacy policy describes infrastructure providers by category (cloud database, website hosting, email) instead of by name, as GDPR Article 13(1)(e) allows. PostHog stays named because analytics depend on consent. The actual providers and regions recorded in the README must be given to anyone who asks, and processor agreements and transfer safeguards still need confirming for each one, including the forwarded Gmail mailbox.

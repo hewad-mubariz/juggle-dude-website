@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Terms of use",
-  description: "Juggle Dude account terms, adult eligibility, recordings, account content, and Apple subscriptions.",
+  description: "Juggle Dude account terms, age requirements, recordings, account content, and Apple subscriptions.",
   robots: site.operatorDetailsReady ? undefined : { index: false, follow: true },
 };
 
@@ -16,7 +16,7 @@ export default function Terms() {
 
       <h2>1. Operator, eligibility, and licence</h2>
       <p>Juggle Dude is operated by {site.operatorName}, based in {site.operatorCountry}. Contact <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>; postal contact details are on the <Link href="/imprint/">Impressum</Link>. {site.supportEmailConfirmed ? "" : "The proposed mailbox has not yet been confirmed active."}</p>
-      <p>You must be at least {site.minimumAge} to use Juggle Dude or create an account. These service terms cover accounts, training features, and related services. The iPhone app’s software licence is governed by <a href={site.appleEulaUrl}>Apple’s standard End User Licence Agreement</a>. Mandatory consumer rights remain unaffected.</p>
+      <p>Anyone can practise as a guest. You must be at least {site.minimumAge} to create an account or share usage analytics. If you are under {site.parentalConsentAge}, you need permission from a parent or guardian to do either. These service terms cover accounts, training features, and related services. The iPhone app’s software licence is governed by <a href={site.appleEulaUrl}>Apple’s standard End User Licence Agreement</a>. Mandatory consumer rights remain unaffected.</p>
 
       <h2>2. Training, counts, and safe use</h2>
       <p>Juggle Dude analyses recorded or selected football videos, estimates touches, and lets you review sessions. Automatic counts can miss or misidentify touches. Results are reported by the device and are not independently verified competition scores. Review a replay when a result matters.</p>

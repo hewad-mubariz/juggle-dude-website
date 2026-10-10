@@ -42,7 +42,7 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 
 - `/`: approved Clubhouse design, football imagery, app features, and download section.
 - `/privacy/`: functionality-based privacy policy with verified provider details, retention criteria, and deletion instructions. Internal review reminders are kept in `docs/apple-review.md`.
-- `/terms/`: adult eligibility, service terms, Apple’s standard EULA, and subscription information.
+- `/terms/`: age requirements (13+, parental permission under 16), service terms, Apple’s standard EULA, and subscription information.
 - `/support/`: recording tips, local video history, account and subscription help, and contact details.
 - `/imprint/`: German operator/contact page with the operator's supplied postal address.
 - `/auth/email/`: retained compatibility fallback for previously issued development email links; email sign-in is not offered in this release.
@@ -86,7 +86,7 @@ The existing Apple app ID is `6820780610`; the iOS project’s release notes cur
 
 The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Sign in with Apple through Supabase, account profiles/avatars/results, and Apple StoreKit subscriptions. Public leaderboards and sharing are deferred from the first launch; retained development code is not advertised as a release feature. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
 
-Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's postal address and confirmed mailbox are published. The terms and Impressum no longer depend on unfinished privacy-retention settings for publication or search indexing.
+Marketing and privacy copy use neutral wording; accounts and analytics require age 13+, with parental permission under 16; guest practice is open to everyone. The operator's postal address and confirmed mailbox are published. The terms and Impressum no longer depend on unfinished privacy-retention settings for publication or search indexing.
 
 The 10 October 2026 audit confirmed Supabase in Ireland, Vercel hosting, SES support receiving and forwarding in Stockholm, Gmail forwarding, and 30-day S3 message expiry/CloudWatch forwarding-log retention. Auth audit logging into the database is disabled. The current Supabase Free plan has no scheduled project backups; its published API/database and Auth audit-log retention are documented in the policy. These facts do not establish that all processing is EEA-only or that provider recovery copies disappear immediately.
 
