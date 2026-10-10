@@ -6,13 +6,13 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Terms of use",
   description: "Juggle Dude account terms, adult eligibility, recordings, public profiles, and Apple subscriptions.",
-  robots: site.privacyApproved ? undefined : { index: false, follow: true },
+  robots: site.operatorDetailsReady ? undefined : { index: false, follow: true },
 };
 
 export default function Terms() {
   return (
     <ContentPage eyebrow={`Last updated ${site.policyDate}`} title="Terms of use" intro="These terms explain using Juggle Dude, taking care of your account, and managing an optional Pro subscription.">
-      {!site.privacyApproved && <aside className="notice"><p><strong>Pre-launch draft.</strong> Contact details, account deletion, and the final release features must be confirmed before these terms are used for public accounts or paid subscriptions.</p></aside>}
+      {!site.operatorDetailsReady && <aside className="notice"><p><strong>Contact details pending.</strong> The operator’s postal address and working contact mailbox must be confirmed.</p></aside>}
 
       <h2>1. Operator, eligibility, and licence</h2>
       <p>Juggle Dude is operated by {site.operatorName}, based in {site.operatorCountry}. Contact <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>; postal contact details are on the <Link href="/imprint/">Impressum</Link>. {site.supportEmailConfirmed ? "" : "The proposed mailbox has not yet been confirmed active."}</p>
@@ -38,10 +38,9 @@ export default function Terms() {
       <p>Payment is charged to your Apple Account when the purchase is confirmed. Subscriptions renew automatically unless cancelled at least 24 hours before the current period ends. Apple may charge for renewal within the 24 hours before that period ends, at the renewal price shown under Apple’s terms.</p>
       <p><a href="https://apps.apple.com/account/subscriptions/">Manage or cancel your subscription through Apple</a>, or open iPhone Settings, tap your name, then Subscriptions. Cancellation normally stops the next renewal, with access continuing for the paid period. Use Restore purchases in Juggle Dude with the Apple Account used to purchase. Pro can be purchased without creating a Juggle Dude account.</p>
       <p>Apple manages billing and refund requests. You can <a href="https://support.apple.com/118223">request a refund through Apple</a>; eligibility is determined under its policies and applicable law. Your statutory rights are not limited by these terms.</p>
-      {!site.privacyApproved && <p><strong>Release note:</strong> the final Pro benefits and feature access are still being verified. This draft does not promise unreleased features.</p>}
 
       <h2>6. Leaving the service and deleting data</h2>
-      {site.deletionInstructions ? <p className="whitespace-pre-line">{site.deletionInstructions}</p> : <p><strong>The current development build does not yet offer account deletion.</strong> The process must be implemented and tested before release. Final instructions will appear in the <Link href="/privacy/#account-deletion">account-deletion section</Link>.</p>}
+      <p className="whitespace-pre-line">{site.deletionInstructions}</p>
       <p>Signing out, deleting the app, or deleting a Juggle Dude account does not cancel an Apple subscription. Manage it separately through Apple. Account deletion also does not remove exported Photos clips or copies shared elsewhere. You may remove a completed local replay in History; its saved account result remains unless separately deleted.</p>
 
       <h2>7. Availability and changes</h2>

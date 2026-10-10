@@ -41,7 +41,7 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 ## Pages
 
 - `/`: approved Clubhouse design, football imagery, app features, and download section.
-- `/privacy/`: functionality-based privacy policy, clearly marked as a draft until approved.
+- `/privacy/`: functionality-based privacy policy with verified providers and deletion instructions; remaining retention and provider-arrangement review is identified.
 - `/terms/`: adult eligibility, service terms, Apple’s standard EULA, and subscription information.
 - `/support/`: recording tips, local video history, account and subscription help, and contact details.
 - `/imprint/`: German operator/contact page with the operator's supplied postal address.
@@ -68,25 +68,29 @@ Copy `.env.example` to `.env.local` and fill in the public settings. Rebuild aft
 | `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED` | Defaults to confirmed for the supplied mailbox. A replacement needs its own confirmation; an explicit `false` restores pending notices. |
 | `NEXT_PUBLIC_OPERATOR_NAME` | Confirmed default: Hewad Mubariz, individual developer in Mainz, Germany. |
 | `NEXT_PUBLIC_CONTACT_ADDRESS` | Optional public postal-address override; defaults to the address supplied for publication by the operator. |
-| `NEXT_PUBLIC_PROCESSING_DETAILS` | Verified providers, processing regions, and international-transfer arrangements. |
+| `NEXT_PUBLIC_PROCESSING_DETAILS` | Optional override of verified providers/regions in source. Review applicable processor and transfer arrangements before final approval. |
 | `NEXT_PUBLIC_RETENTION_DETAILS` | Verified retention periods/criteria, deletion timing, backup expiry, and legal exceptions. |
-| `NEXT_PUBLIC_DELETION_INSTRUCTIONS` | Actual tested in-app deletion process, scope, timing and confirmation. |
+| `NEXT_PUBLIC_DELETION_INSTRUCTIONS` | Optional override of the implemented Profile → Delete account instructions. |
 | `NEXT_PUBLIC_APP_STORE_URL` | Live App Store listing. Leave empty until available. |
-| `NEXT_PUBLIC_PRIVACY_APPROVED` | Set `true` only after review. The confirmed mailbox, address, processing, retention and deletion settings are also required to remove policy/terms draft notices. This does not certify legal compliance or Apple approval. |
+| `NEXT_PUBLIC_PRIVACY_APPROVED` | Set `true` only after review. The confirmed mailbox, address, processing, retention and deletion settings are also required to remove the remaining privacy review notice. This does not certify legal compliance or Apple approval. |
 
-Run `npm run check:launch` to identify unfinished launch settings. It intentionally fails with the placeholder defaults. Normal builds and CI still succeed with defaults so the design can be reviewed before release.
+Run `npm run check:launch` to identify unfinished launch settings. It identifies unfinished privacy approval/retention and App Store listing settings. Verified provider and deletion defaults no longer require environment placeholders. An unavailable App Store listing does not prevent hosting the legal pages. Normal builds and CI still succeed with defaults so the design can be reviewed before release.
 
 All these values are public in the export, including an address configured through hosting environment variables. Never put secrets in them. Use quoted plain-language values for statements containing spaces; React renders them as text. For more detailed operational copy, edit the policy source and update the readiness checks together. Do not remove notices merely by filling fields with unverified plans.
 
 The existing Apple app ID is `6820780610`; the iOS project’s release notes currently say the app is preparing for submission. This website therefore defaults to **Coming soon**, without a fake download button. There is no Android availability claim.
 
-## Privacy draft
+## Privacy publication status
 
 The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Supabase sign-in/profiles/avatars/results, optional leaderboard visibility, and Apple StoreKit subscriptions. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
 
-Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's supplied postal address is published in the Impressum, and the support mailbox is confirmed functional by the operator. Before using the policy in App Store metadata, finish provider and transfer arrangements, retention schedules, account deletion, and release verification. The current iOS app has no account-deletion endpoint and its privacy links show placeholders. Policies describe these gaps honestly rather than inventing a working flow. No changes were made to the iOS app by this website update.
+Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's postal address and confirmed mailbox are published. The terms and Impressum no longer depend on unfinished privacy-retention settings for publication or search indexing.
 
-See [App Store review notes](docs/apple-review.md) for source evidence, app changes needed before submission, a working privacy-label inventory, German imprint and Apple trader contact distinctions, and final URL setup. The draft pages are excluded from search indexing. The site still needs hosting on a public HTTPS domain before it can serve as an App Store policy URL.
+The 10 October 2026 audit confirmed Supabase in Ireland, Vercel hosting, SES support receiving and forwarding in Stockholm, Gmail forwarding, and 30-day S3 message expiry/CloudWatch forwarding-log retention. Auth audit logging into the database is disabled. The current Supabase Free plan has no scheduled project backups; its published API/database and Auth audit-log retention are documented in the policy. These facts do not establish that all processing is EEA-only or that provider recovery copies disappear immediately.
+
+Account deletion and live legal links are implemented in the iOS app. The shared website instructions now describe Profile → Delete account, Apple reauthorisation where needed, server confirmation, and local cleanup. The app's deletion notes still require a successful real-device test with a disposable account and Apple revocation before submission. No iOS or backend changes were made for this website update.
+
+The privacy policy still identifies a narrower review of forwarded support-mail retention, hosting/security-log and recovery-copy retention, and applicable processor/transfer arrangements. Keep that notice until these practices are confirmed; do not approve by inserting invented durations. See [App Store review notes](docs/apple-review.md) for the updated evidence and remaining release checks. The site is already available on the public HTTPS domain; only the pending privacy page remains excluded from search indexing.
 
 ## Images
 

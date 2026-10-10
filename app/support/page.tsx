@@ -17,7 +17,7 @@ export default function Support() {
       <h2>Accounts and public profiles</h2><p>You can practise as a guest. Sign in to save account results and edit your profile. Leaderboard sharing is off by default and can be changed in your profile. See the <Link href="/privacy/">privacy policy</Link> for the current data practices.</p>
       <h2>Subscriptions and restoring purchases</h2><p>Open Juggle Dude Pro in Profile to see your status or restore purchases. To manage or cancel an Apple subscription, open Settings on your iPhone, tap your name, then Subscriptions. Use the Apple Account you purchased with.</p>
       <h2>Deleting an account</h2>
-      {site.deletionInstructions ? <p className="whitespace-pre-line">{site.deletionInstructions}</p> : <p>Account deletion is not yet available in the development build and must be added before public release. Signing out or uninstalling does not delete the cloud account. See the <Link href="/privacy/#account-deletion">account-deletion section</Link> for the current status.</p>}
+      <p className="whitespace-pre-line">{site.deletionInstructions}</p>
       <p>Deleting an account does not cancel an Apple subscription. <a href="https://apps.apple.com/account/subscriptions/">Manage your subscription through Apple</a> separately.</p>
       <h2>Contact and privacy requests</h2>
       {site.supportEmail ? <p>Email <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>. Include your app version, iPhone model, and a short description of the problem. Avoid sending sign-in codes, payment information, or other people’s recordings.</p> : <p>The support and privacy contact will be published here before launch. In the meantime, the tips above cover recording, account results, and subscriptions.</p>}
