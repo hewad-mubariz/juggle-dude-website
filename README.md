@@ -44,7 +44,7 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 - `/privacy/`: functionality-based privacy policy, clearly marked as a draft until approved.
 - `/terms/`: adult eligibility, service terms, Apple’s standard EULA, and subscription information.
 - `/support/`: recording tips, local video history, account and subscription help, and contact details.
-- `/imprint/`: German operator/contact page; postal address remains unset until provided.
+- `/imprint/`: German operator/contact page with the operator's supplied postal address.
 - `/auth/email/`: email sign-in fallback when iOS does not open the installed app.
 
 ## iPhone email links
@@ -67,7 +67,7 @@ Copy `.env.example` to `.env.local` and fill in the public settings. Rebuild aft
 | `NEXT_PUBLIC_SUPPORT_EMAIL` | Proposed default: `hello@juggledude.com`; must be a real monitored mailbox. |
 | `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED` | Set `true` after verifying incoming email and monitoring. |
 | `NEXT_PUBLIC_OPERATOR_NAME` | Confirmed default: Hewad Mubariz, individual developer in Mainz, Germany. |
-| `NEXT_PUBLIC_CONTACT_ADDRESS` | Legally suitable public postal address. No home address is inferred or published. |
+| `NEXT_PUBLIC_CONTACT_ADDRESS` | Optional public postal-address override; defaults to the address supplied for publication by the operator. |
 | `NEXT_PUBLIC_PROCESSING_DETAILS` | Verified providers, processing regions, and international-transfer arrangements. |
 | `NEXT_PUBLIC_RETENTION_DETAILS` | Verified retention periods/criteria, deletion timing, backup expiry, and legal exceptions. |
 | `NEXT_PUBLIC_DELETION_INSTRUCTIONS` | Actual tested in-app deletion process, scope, timing and confirmation. |
@@ -84,7 +84,7 @@ The existing Apple app ID is `6820780610`; the iOS project’s release notes cur
 
 The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Supabase sign-in/profiles/avatars/results, optional leaderboard visibility, and Apple StoreKit subscriptions. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
 
-Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. Before using the policy in App Store metadata, finish contact/address details, provider and transfer arrangements, retention schedules, account deletion, and release verification. The current iOS app has no account-deletion endpoint and its privacy links show placeholders. Policies describe these gaps honestly rather than inventing a working flow. No changes were made to the iOS app by this website update.
+Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's supplied postal address is published in the Impressum. Before using the policy in App Store metadata, finish mailbox verification, provider and transfer arrangements, retention schedules, account deletion, and release verification. The current iOS app has no account-deletion endpoint and its privacy links show placeholders. Policies describe these gaps honestly rather than inventing a working flow. No changes were made to the iOS app by this website update.
 
 See [App Store review notes](docs/apple-review.md) for source evidence, app changes needed before submission, a working privacy-label inventory, German imprint and Apple trader contact distinctions, and final URL setup. The draft pages are excluded from search indexing. The site still needs hosting on a public HTTPS domain before it can serve as an App Store policy URL.
 

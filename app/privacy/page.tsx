@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function Privacy() {
   return (
     <ContentPage eyebrow={`Last updated ${site.policyDate}`} title="Privacy policy" intro="Your training videos are analysed on your phone. If you create an account, we store your profile and training results so you can use them across devices.">
-      {!site.privacyApproved && <aside className="notice" aria-label="Draft policy notice"><p><strong>Pre-launch draft.</strong> This page describes the current development app. A working contact mailbox, postal contact address, provider and processing locations, retention schedules, and an implemented account-deletion process must be confirmed before public release.</p></aside>}
+      {!site.privacyApproved && <aside className="notice" aria-label="Draft policy notice"><p><strong>Pre-launch draft.</strong> This page describes the current development app. A working contact mailbox, {!site.contactAddress && "postal contact address, "}provider and processing locations, retention schedules, and an implemented account-deletion process must be confirmed before public release.</p></aside>}
 
       <h2>1. Who is responsible</h2>
       <p>Juggle Dude is operated by {site.operatorName}, an individual developer based in {site.operatorCity}, {site.operatorCountry}, who is the controller of the personal information described here. This policy covers the iPhone app and this website.</p>

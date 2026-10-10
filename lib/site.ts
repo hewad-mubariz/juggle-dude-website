@@ -13,7 +13,7 @@ if (supportEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(supportEmail)) {
 }
 
 const supportEmailConfirmed = process.env.NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED === "true";
-const contactAddress = process.env.NEXT_PUBLIC_CONTACT_ADDRESS?.trim() || null;
+const contactAddress = process.env.NEXT_PUBLIC_CONTACT_ADDRESS?.trim() || "Mombacher Str. 101\n55122 Mainz\nGermany";
 const processingDetails = process.env.NEXT_PUBLIC_PROCESSING_DETAILS?.trim() || null;
 const retentionDetails = process.env.NEXT_PUBLIC_RETENTION_DETAILS?.trim() || null;
 const deletionInstructions = process.env.NEXT_PUBLIC_DELETION_INSTRUCTIONS?.trim() || null;

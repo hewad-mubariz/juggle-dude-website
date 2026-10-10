@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function Imprint() {
   return (
     <ContentPage eyebrow="Operator information" title="Impressum" intro="Legal contact information for Juggle Dude.">
-      {(!site.contactAddress || !site.supportEmailConfirmed) && <aside className="notice"><p><strong>Pre-launch draft.</strong> The postal contact address and working email must be completed and verified before commercial publication.</p></aside>}
+      {(!site.contactAddress || !site.supportEmailConfirmed) && <aside className="notice"><p><strong>Pre-launch draft.</strong> {site.contactAddress ? "A working contact mailbox must be confirmed before commercial publication." : "The postal contact address and working email must be completed and verified before commercial publication."}</p></aside>}
       <h2>Service provider / Diensteanbieter</h2>
       <p>{site.operatorName}<br />Juggle Dude<br />{site.operatorCity}, {site.operatorCountry}</p>
       <h2>Postal address / Anschrift</h2>
