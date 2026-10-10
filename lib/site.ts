@@ -25,6 +25,7 @@ export const site = {
   appStoreUrl: optionalHttpsUrl(process.env.NEXT_PUBLIC_APP_STORE_URL),
   supportEmail,
   operatorName: process.env.NEXT_PUBLIC_OPERATOR_NAME?.trim() || "Hewad Mubariz",
+  operatorCity: "Mainz",
   operatorCountry: "Germany",
   minimumAge: 18,
   supportEmailConfirmed,
@@ -33,6 +34,6 @@ export const site = {
   retentionDetails,
   deletionInstructions,
   privacyApproved: process.env.NEXT_PUBLIC_PRIVACY_APPROVED === "true" && supportEmailConfirmed && Boolean(contactAddress && processingDetails && retentionDetails && deletionInstructions),
-  policyDate: "9 October 2026",
+  policyDate: "10 October 2026",
   appleEulaUrl: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
 };

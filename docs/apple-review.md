@@ -4,10 +4,10 @@ Reviewed 9 October 2026 against the current iOS source in the sibling `kicklab` 
 
 ## Confirmed operator details and unfinished publication details
 
-- Operator: **Hewad Mubariz**, individual developer based in **Germany**.
+- Operator: **Hewad Mubariz**, individual developer based in **Mainz, Germany** (city confirmed 10 October 2026).
 - Minimum age: **18**. This is a product decision; the current sign-in flow does not yet enforce it.
 - Proposed contact: **hello@juggledude.com**. Receiving and monitoring email has not been confirmed. Test it before removing the notice.
-- No postal address has been provided or published. Configure a lawful public address privately in hosting settings after checking its suitability. All `NEXT_PUBLIC_*` values become public in the generated website.
+- The city and country are published as the operator's location. A full postal address has not been provided or published, so the contact-address readiness requirement remains incomplete. Configure a lawful public address privately in hosting settings after checking its suitability. All `NEXT_PUBLIC_*` values become public in the generated website.
 - The production Supabase region, website/email providers, retention schedules, backup expiry and deletion process remain unverified. Do not invent durations or claim EU-only storage.
 
 For a commercial German digital service, [§5 DDG](https://www.gesetze-im-internet.de/ddg/__5.html) generally requires a readily accessible name, postal address, and electronic contact. A service address must satisfy the actual legal requirements; a mailbox-only forwarding arrangement should not be assumed sufficient. Add register or VAT/business identification details if applicable; do not publish a personal tax number.

@@ -13,7 +13,7 @@ export default function Imprint() {
     <ContentPage eyebrow="Operator information" title="Impressum" intro="Legal contact information for Juggle Dude.">
       {(!site.contactAddress || !site.supportEmailConfirmed) && <aside className="notice"><p><strong>Pre-launch draft.</strong> The postal contact address and working email must be completed and verified before commercial publication.</p></aside>}
       <h2>Service provider / Diensteanbieter</h2>
-      <p>{site.operatorName}<br />Juggle Dude<br />{site.operatorCountry}</p>
+      <p>{site.operatorName}<br />Juggle Dude<br />{site.operatorCity}, {site.operatorCountry}</p>
       <h2>Postal address / Anschrift</h2>
       {site.contactAddress ? <p className="whitespace-pre-line">{site.contactAddress}</p> : <p>A legally suitable postal address has not yet been provided.</p>}
       <h2>Contact / Kontakt</h2>

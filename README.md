@@ -66,7 +66,7 @@ Copy `.env.example` to `.env.local` and fill in the public settings. Rebuild aft
 | `NEXT_PUBLIC_SITE_URL` | Deployed HTTPS origin for sitemap and absolute metadata. |
 | `NEXT_PUBLIC_SUPPORT_EMAIL` | Proposed default: `hello@juggledude.com`; must be a real monitored mailbox. |
 | `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED` | Set `true` after verifying incoming email and monitoring. |
-| `NEXT_PUBLIC_OPERATOR_NAME` | Confirmed default: Hewad Mubariz, individual developer in Germany. |
+| `NEXT_PUBLIC_OPERATOR_NAME` | Confirmed default: Hewad Mubariz, individual developer in Mainz, Germany. |
 | `NEXT_PUBLIC_CONTACT_ADDRESS` | Legally suitable public postal address. No home address is inferred or published. |
 | `NEXT_PUBLIC_PROCESSING_DETAILS` | Verified providers, processing regions, and international-transfer arrangements. |
 | `NEXT_PUBLIC_RETENTION_DETAILS` | Verified retention periods/criteria, deletion timing, backup expiry, and legal exceptions. |

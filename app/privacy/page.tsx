@@ -15,7 +15,7 @@ export default function Privacy() {
       {!site.privacyApproved && <aside className="notice" aria-label="Draft policy notice"><p><strong>Pre-launch draft.</strong> This page describes the current development app. A working contact mailbox, postal contact address, provider and processing locations, retention schedules, and an implemented account-deletion process must be confirmed before public release.</p></aside>}
 
       <h2>1. Who is responsible</h2>
-      <p>Juggle Dude is operated by {site.operatorName}, an individual developer based in {site.operatorCountry}, who is the controller of the personal information described here. This policy covers the iPhone app and this website.</p>
+      <p>Juggle Dude is operated by {site.operatorName}, an individual developer based in {site.operatorCity}, {site.operatorCountry}, who is the controller of the personal information described here. This policy covers the iPhone app and this website.</p>
       <p>For privacy questions or requests, contact <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>. {site.supportEmailConfirmed ? "" : "This is the proposed contact address; mailbox availability has not yet been confirmed."} Postal contact details are on our <Link href="/imprint/">Impressum</Link>.</p>
 
       <h2>2. Camera, imported videos, and local replays</h2>
