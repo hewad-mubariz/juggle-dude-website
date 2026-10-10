@@ -14,7 +14,7 @@ export default function Support() {
       <p>{site.appStoreUrl ? <>Juggle Dude is available for iPhone. <a href={site.appStoreUrl}>Open it on the App Store</a> to check compatibility and download the app.</> : "Juggle Dude is getting ready for the App Store. The download link will be added here when the app is available. It is being built for iPhone."}</p>
       <h2>Getting a clearer count</h2><ul><li>Keep the phone steady, with your feet and the ball in frame.</li><li>Use good lighting and give yourself enough room to play.</li><li>Watch the replay if a touch looks missed or counted twice.</li></ul>
       <h2>Finding your recordings</h2><p>Open History from Home or Profile to see recorded and imported sessions. Replays are stored on the phone where they were recorded. Signed-in account results can sync across devices; the original video does not.</p>
-      <h2>Accounts and public profiles</h2><p>You can practise as a guest without creating an account. Use Sign in with Apple to save account results and edit your profile. Leaderboard sharing is off by default and can be changed in your profile. See the <Link href="/privacy/">privacy policy</Link> for the current data practices.</p>
+      <h2>Guest mode and accounts</h2><p>You can practise as a guest without creating an account. Use Sign in with Apple to save account results and edit your profile. See the <Link href="/privacy/">privacy policy</Link> for the current data practices.</p>
       <h2>Subscriptions and restoring purchases</h2><p>Open Juggle Dude Pro in Profile to see your status or restore purchases. To manage or cancel an Apple subscription, open Settings on your iPhone, tap your name, then Subscriptions. Use the Apple Account you purchased with.</p>
       <h2>Deleting an account</h2>
       <p className="whitespace-pre-line">{site.deletionInstructions}</p>
@@ -22,7 +22,7 @@ export default function Support() {
       <h2>Contact and privacy requests</h2>
       {site.supportEmail ? <p>Email <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>. Include your app version, iPhone model, and a short description of the problem. Avoid sending sign-in codes, payment information, or other people’s recordings.</p> : <p>The support and privacy contact will be published here before launch. In the meantime, the tips above cover recording, account results, and subscriptions.</p>}
       {!site.supportEmailConfirmed && <aside className="notice"><p><strong>Contact setup pending.</strong> This is the proposed support and privacy address. We have not yet confirmed that it receives email.</p></aside>}
-      <p>For a complaint about a public profile, include the display name and a description of the issue. Our <Link href="/privacy/#rights">privacy-rights section</Link> explains requests about your personal information.</p>
+      <p>Our <Link href="/privacy/#rights">privacy-rights section</Link> explains requests about your personal information.</p>
     </ContentPage>
   );
 }

@@ -84,7 +84,7 @@ The existing Apple app ID is `6820780610`; the iOS project’s release notes cur
 
 ## Privacy publication status
 
-The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Sign in with Apple through Supabase, account profiles/avatars/results, optional leaderboard visibility, and Apple StoreKit subscriptions. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
+The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Sign in with Apple through Supabase, account profiles/avatars/results, and Apple StoreKit subscriptions. Public leaderboards and sharing are deferred from the first launch; retained development code is not advertised as a release feature. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
 
 Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's postal address and confirmed mailbox are published. The terms and Impressum no longer depend on unfinished privacy-retention settings for publication or search indexing.
 

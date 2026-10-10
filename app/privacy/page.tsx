@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy policy",
-  description: "How Juggle Dude handles videos, accounts, training results, public profiles, and privacy requests.",
+  description: "How Juggle Dude handles videos, accounts, training results, and privacy requests.",
   robots: site.privacyApproved ? undefined : { index: false, follow: true },
 };
 
@@ -27,42 +27,37 @@ export default function Privacy() {
       <p>In this release, you can create an account using Sign in with Apple. If you create an account, we process:</p>
       <ul>
         <li><strong>Account information:</strong> a Juggle Dude account identifier, your Apple sign-in identifier, the email address Apple supplies when you authorise sign-in, and your name if Apple provides it. If you choose Hide My Email, we receive Apple’s private relay address instead of your personal email address.</li>
-        <li><strong>Your chosen profile:</strong> display name, optional country, optional profile photo, and leaderboard-sharing setting. Profile photos are uploaded to account storage.</li>
+        <li><strong>Your chosen profile:</strong> display name, optional country, and optional profile photo. Profile photos are uploaded to account storage.</li>
         <li><strong>Training results:</strong> session identifier, touch count, duration, whether the session was recorded or imported, completion time, app and counter versions, and result eligibility or moderation status.</li>
         <li><strong>Service and support information:</strong> network request information, such as IP addresses and authentication or security events, processed by infrastructure providers; and information you send when requesting help.</li>
       </ul>
       <p>Supabase provides account authentication, the results database, and profile-photo storage. Account results can load on another device. Small pending result records may be stored locally and retried when connectivity returns. Signing out does not delete the cloud account or its results.</p>
 
       <h2>4. Why we use information</h2>
-      <p>We use account and result information to sign you in, maintain your profile, save training history and personal bests, and provide the leaderboard you choose to join. Technical information supports delivering and securing the service, preventing abuse, and resolving failures. Support messages are used to respond to your request.</p>
+      <p>We use account and result information to sign you in, maintain your profile, and save training history and personal bests. Technical information supports delivering and securing the service, preventing abuse, and resolving failures. Support messages are used to respond to your request.</p>
       <p>We do not sell personal information, use advertising or cross-app tracking SDKs, or use your recordings or uploaded profile photos to train cloud AI models. The current app does not include third-party advertising or analytics SDKs. It does not request your contacts or GPS location; profile country is a choice you make.</p>
 
-      <h2>5. Optional public leaderboard</h2>
-      <p>Public sharing is off by default. If you enable it, other people can see your chosen display name, optional country and profile photo, eligible recorded-session score, and rank. Imported-video results are not eligible for the leaderboard. Your email and sign-in provider details are not displayed.</p>
-      <p>You can switch sharing off in your profile. This removes you from new leaderboard queries and prevents new public profile-photo links. Previously issued photo links can remain usable for up to five minutes. We cannot remove screenshots or copies other people made while your profile was public.</p>
-
-      <h2>6. Pro purchases</h2>
+      <h2>5. Pro purchases</h2>
       <p>Apple processes payments and billing information through the App Store. Juggle Dude checks verified StoreKit transactions on your device to determine Pro access. If you are signed in, your account identifier is supplied to Apple as an app-account token associated with the purchase. We do not receive full card details.</p>
       <p>Apple handles subscription renewals, cancellation, and refund requests under its own terms. See our <Link href="/terms/">terms</Link> for subscription information.</p>
 
-      <h2>7. Legal bases in the EEA</h2>
+      <h2>6. Legal bases in the EEA</h2>
       <ul>
         <li><strong>Providing the service — Article 6(1)(b) GDPR:</strong> processing necessary to provide the account, profile, training history, and other features you request.</li>
-        <li><strong>Your consent — Article 6(1)(a):</strong> publishing your optional leaderboard profile. You can withdraw this consent by turning sharing off, without affecting processing that was lawful before withdrawal.</li>
         <li><strong>Legitimate interests — Article 6(1)(f):</strong> proportionate security, abuse prevention, service reliability, and support, balanced against your rights and expectations.</li>
         <li><strong>Legal obligations — Article 6(1)(c):</strong> retaining or disclosing information where applicable law requires it.</li>
       </ul>
-      <p>Account information is needed only if you choose account features. Country, profile photo, and public leaderboard participation are optional. Device permissions can be withdrawn in iOS Settings; features needing that permission will then be unavailable. A device permission alone does not authorise unrelated processing.</p>
+      <p>Account information is needed only if you choose account features. Country and profile photo are optional. Device permissions can be withdrawn in iOS Settings; features needing that permission will then be unavailable. A device permission alone does not authorise unrelated processing.</p>
 
-      <h2>8. Recipients, storage locations, and security</h2>
+      <h2>7. Recipients, storage locations, and security</h2>
       <p>Supabase processes account records and profile photos for us. Apple processes information for Sign in with Apple and handles purchases. Website hosting and email providers process information needed to deliver the website and support; Google provides the Gmail mailbox that receives forwarded support messages. Service providers acting on our behalf must be covered by appropriate confidentiality, security, and data-protection arrangements.</p>
       <p className="whitespace-pre-line">{site.processingDetails}</p>
       <p>Where information is transferred outside the EEA, an applicable legal safeguard is required, such as an adequacy decision or standard contractual clauses with any necessary additional measures. Contact us for details of the safeguards applicable to your information.</p>
       <p>Provider information is available in <a href="https://supabase.com/legal/customer-resources/data-processing-addendum">Supabase’s data-processing addendum</a>, <a href="https://vercel.com/legal/dpa">Vercel’s data-processing addendum</a>, and <a href="https://policies.google.com/privacy/frameworks">Google’s transfer-framework information</a>. These documents describe the providers’ arrangements; a European project region alone does not establish the safeguards for every service we use.</p>
-      <p>The app uses HTTPS for account requests, stores sign-in tokens in the iOS Keychain, and restricts account records to the signed-in owner, except for the public profile information you choose to share. No storage or transmission system can be guaranteed completely secure.</p>
+      <p>The app uses HTTPS for account requests, stores sign-in tokens in the iOS Keychain, and uses access controls for account records. No storage or transmission system can be guaranteed completely secure.</p>
       <p>We may disclose necessary information when legally required, or to establish, exercise, or defend legal claims. We do not give other users access to your private account history.</p>
 
-      <h2 id="retention">9. How long information is kept</h2>
+      <h2 id="retention">8. How long information is kept</h2>
       <p>Local replay videos remain until you remove them or the app’s local storage is erased; they are not automatically evicted. Removing a replay in History removes the app’s local video, not its cloud result or a copy saved to Photos. Guest data remains local. Cloud account records are kept to provide your account until deletion, subject to necessary legal retention.</p>
       <p><strong>Support conversations:</strong> we delete resolved support emails and attachments from our Gmail mailbox within {site.supportRetentionDays} days after your request is resolved. Messages needed to handle an ongoing request are kept while that request remains open. Where particular correspondence is necessary to comply with a legal obligation or establish, exercise, or defend a legal claim, we retain only what is needed for that purpose and delete it when that need ends.</p>
       <ul>
@@ -74,19 +69,19 @@ export default function Privacy() {
       <p>See <a href="https://vercel.com/legal/privacy-notice">Vercel’s retention information</a> for its provider-managed records. We do not maintain a separate website visitor analytics database.</p>
       <p><strong>Deletion from provider systems:</strong> removing information from an active account or mailbox does not necessarily erase every provider copy immediately. Google states that its deletion process generally takes around two months and that encrypted backup copies can remain for up to six months, with possible delays. This is separate from our {site.supportRetentionDays}-day deadline to delete a resolved support conversation from our mailbox. See <a href="https://policies.google.com/technologies/retention">Google’s retention and deletion information</a>. Account-service deletion is described below; our current Supabase plan’s project-backup setting is described above.</p>
 
-      <h2 id="account-deletion">10. Removing your account</h2>
+      <h2 id="account-deletion">9. Removing your account</h2>
       <p className="whitespace-pre-line">{site.deletionInstructions}</p>
-      <p>The deletion process removes your account identity, profile, uploaded profile photo, and saved account results. It also removes your profile from the leaderboard. The app clears that account’s local results, pending uploads, and replays after server confirmation; guest history and other accounts’ local libraries are kept. Separately retained support conversations and infrastructure logs follow the retention arrangements above. You can also contact us to exercise your privacy rights.</p>
+      <p>The deletion process removes your account identity, profile, uploaded profile photo, and saved account results. The app clears that account’s local results, pending uploads, and replays after server confirmation; guest history and other accounts’ local libraries are kept. Separately retained support conversations and infrastructure logs follow the retention arrangements above. You can also contact us to exercise your privacy rights.</p>
       <p>Deleting a Juggle Dude account does not cancel an Apple subscription or remove clips exported to Photos or shared elsewhere. You can <a href="https://apps.apple.com/account/subscriptions/">manage or cancel your Apple subscription</a> separately.</p>
 
-      <h2 id="rights">11. Your choices and rights</h2>
-      <p>You can edit your profile, turn public sharing off, use guest mode, and manage camera and Photos permissions. Under applicable data-protection law, you may request access, correction, erasure, restriction, or a portable copy of your information. You may object to processing based on legitimate interests and withdraw consent at any time.</p>
+      <h2 id="rights">10. Your choices and rights</h2>
+      <p>You can edit your profile, use guest mode, and manage camera and Photos permissions. Under applicable data-protection law, you may request access, correction, erasure, restriction, or a portable copy of your information. You may object to processing based on legitimate interests and withdraw consent at any time.</p>
       <p>Send a request to <a href={`mailto:${site.supportEmail}`}>{site.supportEmail}</a>. We may need proportionate information to verify account ownership; do not send passwords or sign-in codes. GDPR requests are normally answered within one month, with notice if a lawful extension is needed. You may complain to a data-protection supervisory authority, including the authority for the German state where you live or work. These rights can be subject to legal exceptions.</p>
 
-      <h2>12. Account eligibility</h2>
+      <h2>11. Account eligibility</h2>
       <p>Our <Link href="/terms/">terms of use</Link> explain who may use Juggle Dude and create an account. If you believe someone who does not meet those requirements has provided account information, contact us so we can investigate and arrange appropriate removal.</p>
 
-      <h2>13. This website and policy updates</h2>
+      <h2>12. This website and policy updates</h2>
       <p>This website has no advertising, analytics trackers, or marketing cookies. Fonts and images are served with the site. Its host receives network information to deliver pages and may keep security logs; those arrangements are covered in the processing and retention details above. Your email provider and ours process messages when you contact support.</p>
       <p>We will update this policy when our practices change and show the date above. Material changes will be communicated appropriately before they take effect; new uses requiring consent will be subject to a new choice.</p>
     </ContentPage>
