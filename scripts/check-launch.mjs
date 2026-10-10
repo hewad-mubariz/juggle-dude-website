@@ -23,7 +23,10 @@ for (const key of ["NEXT_PUBLIC_SITE_URL", "NEXT_PUBLIC_APP_STORE_URL"]) {
 }
 const email = process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "hello@juggledude.com";
 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) problems.push("Support email is not valid.");
-if (process.env.NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED !== "true") problems.push("The support/privacy mailbox has not been confirmed working.");
+const mailboxConfirmed = process.env.NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED?.trim()
+  ? process.env.NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED.trim() === "true"
+  : email === "hello@juggledude.com";
+if (!mailboxConfirmed) problems.push("The support/privacy mailbox has not been confirmed working.");
 if (process.env.NEXT_PUBLIC_PRIVACY_APPROVED !== "true") problems.push("The policies still need review (NEXT_PUBLIC_PRIVACY_APPROVED).");
 
 if (problems.length) {

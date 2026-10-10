@@ -36,7 +36,7 @@ DNS remains managed at GoDaddy. The project-specific records confirmed on 9 Octo
 | A | `@` | `216.198.79.1` | 600 seconds |
 | CNAME | `www` | `71e42daa1f6e19d2.vercel-dns-017.com.` | 1 hour |
 
-Use the current Vercel Domains dashboard when making future changes; these targets can change. Nameservers and unrelated DNS records were preserved. Vercel manages the site's HTTPS certificates. Domain purchase and website hosting do not create the proposed support mailbox; email delivery still needs separate setup and verification.
+Use the current Vercel Domains dashboard when making future changes; these targets can change. Nameservers and unrelated DNS records were preserved. Vercel manages the site's HTTPS certificates. The operator confirmed the separately configured support mailbox, `hello@juggledude.com`, is functional on 10 October 2026.
 
 ## Pages
 
@@ -64,8 +64,8 @@ Copy `.env.example` to `.env.local` and fill in the public settings. Rebuild aft
 | Setting | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_SITE_URL` | Deployed HTTPS origin for sitemap and absolute metadata. |
-| `NEXT_PUBLIC_SUPPORT_EMAIL` | Proposed default: `hello@juggledude.com`; must be a real monitored mailbox. |
-| `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED` | Set `true` after verifying incoming email and monitoring. |
+| `NEXT_PUBLIC_SUPPORT_EMAIL` | Confirmed default: `hello@juggledude.com`. |
+| `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED` | Defaults to confirmed for the supplied mailbox. A replacement needs its own confirmation; an explicit `false` restores pending notices. |
 | `NEXT_PUBLIC_OPERATOR_NAME` | Confirmed default: Hewad Mubariz, individual developer in Mainz, Germany. |
 | `NEXT_PUBLIC_CONTACT_ADDRESS` | Optional public postal-address override; defaults to the address supplied for publication by the operator. |
 | `NEXT_PUBLIC_PROCESSING_DETAILS` | Verified providers, processing regions, and international-transfer arrangements. |
@@ -84,7 +84,7 @@ The existing Apple app ID is `6820780610`; the iOS project’s release notes cur
 
 The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Supabase sign-in/profiles/avatars/results, optional leaderboard visibility, and Apple StoreKit subscriptions. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
 
-Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's supplied postal address is published in the Impressum. Before using the policy in App Store metadata, finish mailbox verification, provider and transfer arrangements, retention schedules, account deletion, and release verification. The current iOS app has no account-deletion endpoint and its privacy links show placeholders. Policies describe these gaps honestly rather than inventing a working flow. No changes were made to the iOS app by this website update.
+Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's supplied postal address is published in the Impressum, and the support mailbox is confirmed functional by the operator. Before using the policy in App Store metadata, finish provider and transfer arrangements, retention schedules, account deletion, and release verification. The current iOS app has no account-deletion endpoint and its privacy links show placeholders. Policies describe these gaps honestly rather than inventing a working flow. No changes were made to the iOS app by this website update.
 
 See [App Store review notes](docs/apple-review.md) for source evidence, app changes needed before submission, a working privacy-label inventory, German imprint and Apple trader contact distinctions, and final URL setup. The draft pages are excluded from search indexing. The site still needs hosting on a public HTTPS domain before it can serve as an App Store policy URL.
 

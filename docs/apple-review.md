@@ -6,7 +6,7 @@ Reviewed 9 October 2026 against the current iOS source in the sibling `kicklab` 
 
 - Operator: **Hewad Mubariz**, individual developer based in **Mainz, Germany** (city confirmed 10 October 2026).
 - Minimum age: **18**. This is a product decision; the current sign-in flow does not yet enforce it.
-- Proposed contact: **hello@juggledude.com**. Receiving and monitoring email has not been confirmed. Test it before removing the notice.
+- Support/privacy contact: **hello@juggledude.com**, confirmed functional by the operator on 10 October 2026. The default mailbox is marked confirmed; any replacement needs its own confirmation.
 - The full postal address supplied by the operator for publication on 10 October 2026 is included in the Impressum, using the default in `lib/site.ts`. `NEXT_PUBLIC_CONTACT_ADDRESS` can override it when needed. All `NEXT_PUBLIC_*` values become public in the generated website.
 - The production Supabase region, website/email providers, retention schedules, backup expiry and deletion process remain unverified. Do not invent durations or claim EU-only storage.
 
@@ -63,7 +63,7 @@ Confirm the following and write plain-language statements into the matching envi
 - `NEXT_PUBLIC_PROCESSING_DETAILS`: production providers and regions, email/web hosting, processor agreements, non-EEA transfer routes and actual safeguards, and how a user obtains further information. Review [Supabase's DPA](https://supabase.com/legal/customer-resources/data-processing-addendum) and the project's configured region rather than assuming a region from local settings.
 - `NEXT_PUBLIC_RETENTION_DETAILS`: log/support retention periods or meaningful criteria; account-deletion deadline; backup expiry; legal exceptions with data, reason and duration. Ensure the backend and support process can meet the published commitments.
 - `NEXT_PUBLIC_DELETION_INSTRUCTIONS`: tested in-app steps; records removed; local-data handling; timing and confirmation; any exceptions. Do not insert planned menu names as though they exist.
-- `NEXT_PUBLIC_CONTACT_ADDRESS`: a suitable public postal address. Confirm mailbox operation before setting `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED=true`.
+- `NEXT_PUBLIC_CONTACT_ADDRESS`: a suitable public postal address, currently supplied by the operator. Keep the address and mailbox current; confirm any replacement mailbox before setting `NEXT_PUBLIC_SUPPORT_EMAIL_CONFIRMED=true`.
 - Review contract, consent and legitimate-interest bases against actual operation, including public-profile consent and its withdrawal, security balancing, and minimisation. Review [GDPR Articles 6, 12–14 and 15–22](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32016R0679).
 
 Use `NEXT_PUBLIC_PRIVACY_APPROVED=true` only after those details and the app behaviour have been checked. The flag removes draft notices when required settings are present; it is not a legal certification. Consider qualified German legal review of the final public address, consumer terms and privacy arrangements.
