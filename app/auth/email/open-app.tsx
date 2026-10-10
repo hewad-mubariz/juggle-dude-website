@@ -26,7 +26,7 @@ export function OpenApp() {
     <div className="mt-8">
       {link ? <a className="button-lime" href={link} rel="noreferrer">Open Juggle Dude</a> :
         <p className="rounded-xl border border-line bg-soft p-5 text-muted" role="status">
-          {ready ? "Open the newest sign-in email on your iPhone, or request a fresh link in Juggle Dude." : "Preparing your link…"}
+          {ready ? "This release offers Sign in with Apple and guest practice. Open Juggle Dude to get started." : "Preparing your link…"}
         </p>}
       <p className="mt-5 text-sm leading-relaxed text-muted">Use the same iPhone where you requested the email. Make sure the latest Juggle Dude app is installed.</p>
     </div>

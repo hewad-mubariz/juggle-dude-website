@@ -24,9 +24,9 @@ export default function Privacy() {
 
       <h2>3. Guest mode and account information</h2>
       <p>You can practise as a guest without creating a Juggle Dude account. Guest training results and replays stay in a separate local library. Signing in later does not upload or automatically assign earlier guest sessions to your account. Apple may still process a Pro purchase if you subscribe as a guest.</p>
-      <p>If you create an account using Apple, Google, or an email sign-in link, we process:</p>
+      <p>In this release, you can create an account using Sign in with Apple. If you create an account, we process:</p>
       <ul>
-        <li><strong>Account information:</strong> an account identifier, email address, sign-in provider, and identity information supplied by that provider, which may include a name or profile metadata. Apple’s private relay address can be used when you choose Hide My Email.</li>
+        <li><strong>Account information:</strong> a Juggle Dude account identifier, your Apple sign-in identifier, the email address Apple supplies when you authorise sign-in, and your name if Apple provides it. If you choose Hide My Email, we receive Apple’s private relay address instead of your personal email address.</li>
         <li><strong>Your chosen profile:</strong> display name, optional country, optional profile photo, and leaderboard-sharing setting. Profile photos are uploaded to account storage.</li>
         <li><strong>Training results:</strong> session identifier, touch count, duration, whether the session was recorded or imported, completion time, app and counter versions, and result eligibility or moderation status.</li>
         <li><strong>Service and support information:</strong> network request information, such as IP addresses and authentication or security events, processed by infrastructure providers; and information you send when requesting help.</li>
@@ -55,7 +55,7 @@ export default function Privacy() {
       <p>Account information is needed only if you choose account features. Country, profile photo, and public leaderboard participation are optional. Device permissions can be withdrawn in iOS Settings; features needing that permission will then be unavailable. A device permission alone does not authorise unrelated processing.</p>
 
       <h2>8. Recipients, storage locations, and security</h2>
-      <p>Supabase processes account records and profile photos for us. Apple and Google also process information when you use their sign-in services, and Apple handles purchases. Website hosting and email providers process information needed to deliver the website and support. Service providers acting on our behalf must be covered by appropriate confidentiality, security, and data-protection arrangements.</p>
+      <p>Supabase processes account records and profile photos for us. Apple processes information for Sign in with Apple and handles purchases. Website hosting and email providers process information needed to deliver the website and support; Google provides the Gmail mailbox that receives forwarded support messages. Service providers acting on our behalf must be covered by appropriate confidentiality, security, and data-protection arrangements.</p>
       <p className="whitespace-pre-line">{site.processingDetails}</p>
       <p>Where information is transferred outside the EEA, an applicable legal safeguard is required, such as an adequacy decision or standard contractual clauses with any necessary additional measures. Contact us for details of the safeguards applicable to your information.</p>
       <p>Provider information is available in <a href="https://supabase.com/legal/customer-resources/data-processing-addendum">Supabase’s data-processing addendum</a>, <a href="https://vercel.com/legal/dpa">Vercel’s data-processing addendum</a>, and <a href="https://policies.google.com/privacy/frameworks">Google’s transfer-framework information</a>. These documents describe the providers’ arrangements; a European project region alone does not establish the safeguards for every service we use.</p>

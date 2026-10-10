@@ -5,6 +5,7 @@ Updated 10 October 2026 against the current iOS source in the sibling `kicklab` 
 ## Confirmed operator details and unfinished publication details
 
 - Operator: **Hewad Mubariz**, individual developer based in **Mainz, Germany** (city confirmed 10 October 2026).
+- Release sign-in choices: **Sign in with Apple and guest practice**, confirmed by the operator and the commented-out Google/email controls in `Account/SignInView.swift` on 10 October 2026. Legacy methods and development email-link support remain in code; no backend-provider configuration was changed by this website update.
 - Minimum age: **18**. This is a product decision; the current sign-in flow does not yet enforce it.
 - Support/privacy contact: **hello@juggledude.com**, confirmed functional by the operator on 10 October 2026. The default mailbox is marked confirmed; any replacement needs its own confirmation.
 - The full postal address supplied by the operator for publication on 10 October 2026 is included in the Impressum, using the default in `lib/site.ts`. `NEXT_PUBLIC_CONTACT_ADDRESS` can override it when needed. All `NEXT_PUBLIC_*` values become public in the generated website.
@@ -23,7 +24,7 @@ Apple separately requires traders distributing in the EU to provide verified pub
 | Implementation | Policy consequence |
 | --- | --- |
 | `docs/player-data.md`, `Profile/PlayerData.swift`, `Profile/PlayerStore.swift` | Cloud session metadata, private account history, optional public profiles; no training-video uploads. Guest history remains local and separate. |
-| `Account/AccountService.swift`, `Account/AccountStore.swift` | Supabase Apple/Google/email identity, provider metadata and device Keychain tokens. Account deletion now exists; see the deletion evidence below. |
+| `Account/AccountService.swift`, `Account/AccountStore.swift` | The main release sign-in flow offers Apple + guest; Supabase stores Apple identity/email and any supplied name, with device Keychain tokens. Legacy Google/email methods remain in source but are not offered in the main sign-in UI. Account deletion exists; see the evidence below. |
 | `Profile/CloudProfileEditor.swift`, account database migration | Optional name/country/avatar; sharing off by default; signed avatar URLs expire in five minutes. The deployed deletion endpoint explicitly removes avatar Storage bytes. |
 | `Detection/CameraSession.swift`, `Recorder.swift`, Xcode permission strings | Video capture and local analysis; no microphone capture observed; user-directed Photos export. |
 | `Pro/SubscriptionStore.swift`, `ProOffer.swift`, `docs/subscriptions.md` | StoreKit monthly/yearly plans, restore/manage, on-device entitlement checks; signed-in account UUID sent as app-account token. Final Pro feature gating remains unfinished. |
@@ -41,7 +42,7 @@ Paths in this table are relative to the iOS project (`kicklab/` for Swift files)
 
 Items 2–5 are informed by the [App Review Guidelines](https://developer.apple.com/app-store/review/guidelines/) (1.2, 1.5, 2.1, 2.3, 3.1.2 and 5.1.1). These observations are specific implementation gaps, not an exhaustive review audit.
 
-Email Universal Link sign-in on the installed iPhone was confirmed by the operator on 10 October 2026; `docs/auth-setup.md` records the verification. Check SES production sending access and Google OAuth release availability, real-device account/avatar/result sync, and the archive's aggregate privacy report and required-reason API declarations. No app-owned `.xcprivacy` file was observed in source; that alone does not establish whether bundled SDK manifests or the submitted archive are sufficient. Revise the camera purpose string to say videos are analysed locally and may be exported or shared at the user's direction; “never leaves it” is too broad for those actions.
+Email Universal Link sign-in on the installed iPhone was previously confirmed during development on 10 October 2026; `docs/auth-setup.md` records that verification. Email and Google sign-in are now deferred from this release, so their rollout is not advertised in the public policy/terms. Recheck delivery/OAuth production readiness and update the public copy before enabling either. For the current Apple + guest release, verify real-device account/avatar/result sync, and the archive's aggregate privacy report and required-reason API declarations. No app-owned `.xcprivacy` file was observed in source; that alone does not establish whether bundled SDK manifests or the submitted archive are sufficient. Revise the camera purpose string to say videos are analysed locally and may be exported or shared at the user's direction; “never leaves it” is too broad for those actions.
 
 ## App Store privacy answers: working inventory
 

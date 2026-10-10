@@ -45,9 +45,11 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 - `/terms/`: adult eligibility, service terms, Apple’s standard EULA, and subscription information.
 - `/support/`: recording tips, local video history, account and subscription help, and contact details.
 - `/imprint/`: German operator/contact page with the operator's supplied postal address.
-- `/auth/email/`: email sign-in fallback when iOS does not open the installed app.
+- `/auth/email/`: retained compatibility fallback for previously issued development email links; email sign-in is not offered in this release.
 
-## iPhone email links
+## Retained development email-link support
+
+The current release offers **Sign in with Apple and guest practice**. Google and email sign-in controls are commented out in the iOS main sign-in view, as confirmed against source on 10 October 2026. Existing backend methods and the website email-link route remain for compatibility/development; this does not make them public sign-in choices. The no-token fallback now directs people to Apple or guest practice instead of telling them to request an unavailable email link.
 
 `/.well-known/apple-app-site-association` associates only `/auth/email/` and `/auth/email` with `G276PSQ2LH.com.juggledude`. Vercel serves this extensionless file as JSON without a redirect. The app must be signed with `applinks:juggledude.com` in its Associated Domains entitlement; Apple fetches and caches the association when the app is installed or updated.
 
@@ -82,7 +84,7 @@ The existing Apple app ID is `6820780610`; the iOS project’s release notes cur
 
 ## Privacy publication status
 
-The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Supabase sign-in/profiles/avatars/results, optional leaderboard visibility, and Apple StoreKit subscriptions. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
+The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Sign in with Apple through Supabase, account profiles/avatars/results, optional leaderboard visibility, and Apple StoreKit subscriptions. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
 
 Marketing and privacy copy use neutral wording; the service terms retain the current 18+ eligibility rule. The operator's postal address and confirmed mailbox are published. The terms and Impressum no longer depend on unfinished privacy-retention settings for publication or search indexing.
 

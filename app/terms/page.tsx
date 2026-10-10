@@ -23,7 +23,7 @@ export default function Terms() {
       <p>Practise somewhere safe, allow enough space, and place your phone away from play. The app is a training companion; it does not provide medical advice, professional coaching, or a guarantee of sporting results.</p>
 
       <h2>3. Guest use and accounts</h2>
-      <p>Guest practice does not require a Juggle Dude account. Account features use Apple, Google, or email-link sign-in. Keep access to your sign-in method secure and do not impersonate others. Tell us if you believe your account has been misused.</p>
+      <p>Guest practice does not require a Juggle Dude account. In this release, account creation and sign-in use Sign in with Apple. Keep access to your Apple Account secure and do not impersonate others. Tell us if you believe your Juggle Dude account has been misused.</p>
       <p>Signed-in results and profile information can be stored online. Guest history is separate and is not automatically transferred when you sign in. Replay videos remain on the device where they were saved; an account does not provide a cloud backup of those videos.</p>
       <p>The <Link href="/privacy/">privacy policy</Link> explains processing and your choices. Accepting these terms does not require opting in to a public leaderboard.</p>
 
