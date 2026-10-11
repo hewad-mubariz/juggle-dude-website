@@ -28,8 +28,6 @@ export const site = {
   operatorName: process.env.NEXT_PUBLIC_OPERATOR_NAME?.trim() || "Hewad Mubariz",
   operatorCity: "Mainz",
   operatorCountry: "Germany",
-  minimumAge: 13,
-  parentalConsentAge: 16,
   supportEmailConfirmed,
   // Operator adopted this manual support-mail routine on 10 October 2026.
   supportRetentionDays: 90,
