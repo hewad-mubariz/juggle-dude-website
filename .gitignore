@@ -6,3 +6,6 @@ out/
 *.tsbuildinfo
 .DS_Store
 artifacts/
+
+# Local Supabase CLI metadata
+supabase/.temp/
