@@ -23,7 +23,7 @@ npm run preview
 
 Open `http://localhost:4173`. `npm run preview -- 4200` selects a different port. The preview server is local development tooling, not a production server.
 
-The app uses Next.js App Router and exports static pages to `out/`. A static host can serve that directory; Vercel can import this repository directly. Preserve directory index routing and use `404.html` for missing routes. The fonts are bundled by `next/font`, and generated photographs are local assets, so visitors do not need third-party font or image requests.
+The app uses Next.js App Router. Marketing and legal pages are prerendered; `/api/admin/` runs as Node.js server routes. Deploy to Vercel or another Next.js server host; serving `out/` alone cannot run the admin panel. The fonts are bundled by `next/font`, and generated photographs are local assets, so visitors do not need third-party font or image requests.
 
 ## Production hosting
 
@@ -40,6 +40,7 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 
 ## Pages
 
+- `/admin/`: private touch-review desk with React Query, server-side login, per-moment decisions, and atomic batch finalisation. See [admin setup](docs/admin.md).
 - `/`: approved Clubhouse design, football imagery, app features, and download section.
 - `/privacy/`: functionality-based privacy policy with verified provider details, retention criteria, and deletion instructions. Internal review reminders are kept in `docs/apple-review.md`.
 - `/terms/`: service terms, applicable parental-authorisation requirements, Apple’s standard EULA, and subscription information.
@@ -84,7 +85,7 @@ Juggle Dude was released on 23 October 2026 with Apple app ID `6820780610`. The 
 
 ## Privacy publication status
 
-The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Sign in with Apple through Supabase, account profiles/avatars/results, and Apple StoreKit subscriptions. Public leaderboards and sharing are deferred from the first launch; retained development code is not advertised as a release feature. Website pages do not authenticate visitors or connect to the app’s database. No app secrets, Supabase settings, account records, or user videos are included in this repository.
+The copy is based on the iOS app’s current implementation: on-device video analysis and local replays, separate guest sessions, Sign in with Apple through Supabase, account profiles/avatars/results, and Apple StoreKit subscriptions. Public leaderboards and sharing are deferred from the first launch; retained development code is not advertised as a release feature. Public marketing pages do not authenticate visitors or connect to the app’s database. The private admin uses server-only Supabase access. No secret values, account records, or user videos are committed to this repository.
 
 The policy and terms no longer impose a blanket numeric account or analytics age limit. They explain that children’s information has additional legal protections and that parental authorisation applies where required. This copy change does not implement age assurance or resolve the review of children’s accounts and analytics consent; that remains in `docs/apple-review.md`. Guest practice does not require an account. The operator's postal address and confirmed mailbox are published. The terms and Impressum no longer depend on unfinished privacy-retention settings for publication or search indexing.
 
