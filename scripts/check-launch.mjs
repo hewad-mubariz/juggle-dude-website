@@ -2,10 +2,10 @@ import nextEnv from "@next/env";
 
 nextEnv.loadEnvConfig(process.cwd());
 
-// Processing locations, retention criteria and deletion instructions have defaults in lib/site.ts.
+// The live App Store URL, processing locations, retention criteria and deletion
+// instructions have defaults in lib/site.ts. Validate URL overrides when supplied.
 const required = [
   "NEXT_PUBLIC_SITE_URL",
-  "NEXT_PUBLIC_APP_STORE_URL",
 ];
 const problems = [];
 for (const key of required) {

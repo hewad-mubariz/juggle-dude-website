@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { site } from "@/lib/site";
 
 export function Wordmark() {
   return <span className="font-display text-[2rem] leading-none font-extrabold tracking-[-0.035em] uppercase">Juggle <span className="text-pitch">Dude.</span></span>;
@@ -12,7 +13,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-5 sm:gap-8">
           <Link href="/#the-app" className="hidden text-sm font-medium hover:text-pitch sm:block">The app</Link>
           <Link href="/support/" className="text-sm font-medium hover:text-pitch">Support</Link>
-          <Link href="/#download" className="button-lime px-4! text-sm sm:px-6!">Get the app</Link>
+          <a href={site.appStoreUrl} className="button-lime px-4! text-sm sm:px-6!">Get the app</a>
         </div>
       </nav>
     </header>

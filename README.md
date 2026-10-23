@@ -73,14 +73,14 @@ Copy `.env.example` to `.env.local` and fill in the public settings. Rebuild aft
 | `NEXT_PUBLIC_PROCESSING_DETAILS` | Optional override of verified providers/regions in source. Review applicable processor and transfer arrangements before final approval. |
 | `NEXT_PUBLIC_RETENTION_DETAILS` | Optional override of provider-managed retention criteria in source; configured account/email periods and the adopted support rule are also documented in the policy. |
 | `NEXT_PUBLIC_DELETION_INSTRUCTIONS` | Optional override of the implemented Profile → Delete account instructions. |
-| `NEXT_PUBLIC_APP_STORE_URL` | Live App Store listing. Leave empty until available. |
+| `NEXT_PUBLIC_APP_STORE_URL` | Optional override of the live listing; defaults to `https://apps.apple.com/app/id6820780610`, including when the variable is empty. |
 | `NEXT_PUBLIC_PRIVACY_APPROVED` | Set `true` only after review. The confirmed mailbox, address, processing, retention and deletion details are also required to enable privacy-page indexing. This is an internal publication check; it does not insert public review banners. This does not certify legal compliance or Apple approval. |
 
-Run `npm run check:launch` to identify unfinished launch settings. It identifies unfinished internal privacy approval and App Store listing settings. Provider locations, retention criteria and deletion instructions have source defaults and no longer require environment placeholders. An unavailable App Store listing does not prevent hosting the legal pages. Normal builds and CI still succeed with defaults so the design can be reviewed before release.
+Run `npm run check:launch` to identify unfinished launch settings. It checks internal privacy approval, the site URL and any App Store URL override. The live App Store listing, provider locations, retention criteria and deletion instructions have source defaults and do not require environment placeholders. Normal builds and CI still succeed with defaults.
 
 All these values are public in the export, including an address configured through hosting environment variables. Never put secrets in them. Use quoted plain-language values for statements containing spaces; React renders them as text. For more detailed operational copy, edit the policy source and update the readiness checks together. Do not remove notices merely by filling fields with unverified plans.
 
-The existing Apple app ID is `6820780610`; the iOS project’s release notes currently say the app is preparing for submission. This website therefore defaults to **Coming soon**, without a fake download button. There is no Android availability claim.
+Juggle Dude was released on 23 October 2026 with Apple app ID `6820780610`. The header, homepage and support page link to its live App Store listing by default. The homepage explains free access, optional Pro and Power Shot replay styling. There is no Android availability claim.
 
 ## Privacy publication status
 

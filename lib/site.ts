@@ -23,7 +23,7 @@ export const site = {
   name: "Juggle Dude",
   description: "Count your juggles. Replay your best runs. Make every kickabout a little more fun. Juggle Dude is your football companion for iPhone.",
   url: optionalHttpsUrl(process.env.NEXT_PUBLIC_SITE_URL),
-  appStoreUrl: optionalHttpsUrl(process.env.NEXT_PUBLIC_APP_STORE_URL),
+  appStoreUrl: optionalHttpsUrl(process.env.NEXT_PUBLIC_APP_STORE_URL) || "https://apps.apple.com/app/id6820780610",
   supportEmail,
   operatorName: process.env.NEXT_PUBLIC_OPERATOR_NAME?.trim() || "Hewad Mubariz",
   operatorCity: "Mainz",
