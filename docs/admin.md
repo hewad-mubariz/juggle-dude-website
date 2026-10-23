@@ -10,7 +10,7 @@
 4. Set `ADMIN_ORIGIN=https://juggledude.com`. Preview deployments fail closed for mutation requests unless deliberately configured with their own exact origin. Local development needs the exact local origin, including port.
 5. Run `npm run typecheck`, `npm run test:admin`, `npm run test:email-link`, and `npm run build`. `npm run preview -- 4174` starts the production Next.js server locally; use the same origin in local environment settings.
 
-The additive SQL is the deployment source for this website. Its version should also be recorded in the app team's database-migration history before their next schema deployment. This task does not edit the sibling iOS repository or deploy its unrelated pending migrations.
+The additive SQL is the deployment source for this website. Its version should also be recorded in the app team's database-migration history before their next schema deployment. The admin implementation does not edit the sibling iOS repository. The current app also requires the streak-session migration described below for its result sync before review uploads can start.
 
 ## Access controls
 
@@ -43,3 +43,11 @@ Confirmed and Rejected tabs show finalised requests and their saved decisions. T
 The optional `scripts/tests/mock-supabase.mjs` preload runs a fresh in-memory PostgreSQL fixture with synthetic data. It is never imported by application code or deployed. It reads the existing review RPC source from the sibling `kicklab` checkout and the website migration, and intercepts only the fixture project's upstream requests inside that test process. Generate a small plain-colour MP4 outside Git at `/tmp/juggledude-admin-fixture.mp4`, then start `NODE_OPTIONS=--import=./scripts/tests/mock-supabase.mjs node scripts/preview.mjs 4175`. `node scripts/tests/admin-http.mjs` verifies the actual Next.js routes against that fixture. The fixture login is test data, not the production administrator. Restart it for each run; successful integration tests consume its pending request.
 
 The public privacy copy now describes optional private touch-check uploads, review decisions/retention, essential admin cookies and the server-backed hosting. Existing public marketing and age/eligibility decisions are preserved.
+
+## Live upload diagnosis — 23 October 2026
+
+The operator reported three requested touch checks still showing Sending. Production had zero `juggling_sessions`, zero `leaderboard_attempts`, and zero objects in `leaderboard-originals`. The current app sends results through `submit_juggling_session_with_streak` and waits for the session to become synced before creating an attempt or uploading review clips. That RPC and its three streak columns were missing in production.
+
+The existing full `scripts/test-account-backend.sh` suite in the sibling app passed against an isolated temporary PostgreSQL database, including the streak migration and its permissions, immutability, correction, period and visibility checks. The matching `202610230001_streak_leaderboard.sql` was copied here and applied transactionally to production. Its SHA-256 is `08a721846985faa52233dbfb57fa1ca4c711abe0abf9ed5dbce75894eadc33ac`. The app working tree and its pre-existing edits were left intact. This enables the current app's session sync and matching streak ranking; profile visibility still follows the existing opt-in setting. No review decision was made for a real user.
+
+The phone keeps its pending result/review outboxes and retries session sync while running, with backoff up to 180 seconds. A phone-side refresh/retry can resume sooner. The presence of the missing server function does not by itself prove that a specific device upload completed; verify the real attempt, object, clip count and browser playback after it arrives.
