@@ -11,12 +11,12 @@
     "check:launch": "node scripts/check-launch.mjs"
   },
   "dependencies": {
-    "next": "16.4.0",
+    "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "devDependencies": {
-    "@next/env": "16.4.0",
+    "@next/env": "16.4.2",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
