@@ -40,7 +40,7 @@ Use the current Vercel Domains dashboard when making future changes; these targe
 
 ## Pages
 
-- `/admin/`: private touch-review desk with React Query, server-side login, per-moment decisions, and atomic batch finalisation. See [admin setup](docs/admin.md).
+- `/admin/`: private analytics and touch-review workspace with server-side login, daily activity, paginated player/session/account lists, linked production Pro access, per-moment decisions, and atomic batch finalisation. See [admin setup](docs/admin.md), including the required analytics migration.
 - `/`: approved Clubhouse design, football imagery, app features, and download section.
 - `/privacy/`: functionality-based privacy policy with verified provider details, retention criteria, and deletion instructions. Internal review reminders are kept in `docs/apple-review.md`.
 - `/terms/`: service terms, applicable parental-authorisation requirements, Apple’s standard EULA, and subscription information.

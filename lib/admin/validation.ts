@@ -2,6 +2,13 @@ import { z } from 'zod';
 import { momentKinds } from './types';
 export const loginSchema = z.object({ email: z.email().max(254), password: z.string().min(1).max(256) }).strict();
 export const idSchema = z.uuid();
+export const analyticsSchema = z.object({
+  days: z.enum(['7', '30', '90']).default('7').transform(Number),
+  source: z.enum(['all', 'recording', 'gallery']).default('all'),
+  list: z.enum(['sessions', 'players', 'accounts', 'pro']).default('sessions'),
+  offset: z.string().regex(/^(0|[1-9][0-9]{0,5})$/).default('0').transform(Number)
+    .refine(n => n <= 100000 && n % 25 === 0),
+}).strict();
 export const finishSchema = z.object({
   requestId: z.uuid(),
   choices: z.array(z.object({id: z.string().regex(new RegExp(`^(${momentKinds.join('|')})-[0-9]{1,8}$`)), decision: z.enum(['confirm','reject'])}).strict()).max(2000),

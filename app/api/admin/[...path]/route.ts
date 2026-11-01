@@ -2,7 +2,8 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { AdminError, attempt, available, config, cookieName, cookieOptions, failure, json, readJSON, requireSession, rpc, supabase, validateMutation, videoPath } from '@/lib/admin/server';
 import { newToken, passwordMatches, privateKey, sessionHash } from '@/lib/admin/security';
-import { finishSchema, idSchema, loginSchema } from '@/lib/admin/validation';
+import { analyticsSchema, finishSchema, idSchema, loginSchema } from '@/lib/admin/validation';
+import type { Analytics } from '@/lib/admin/analytics';
 import type { Queue, ReviewDetail } from '@/lib/admin/types';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -14,6 +15,13 @@ export async function GET(request:Request,context:Context) {
   const token=await requireSession();
   const {path}=await context.params;
   if(path.join('/')==='session') return json({email:config().email});
+  if(path.join('/')==='analytics') {
+   const params=new URL(request.url).searchParams;
+   const parsed=analyticsSchema.safeParse(Object.fromEntries(params));
+   if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid analytics period, source and page.');
+   const {days,source,list,offset}=parsed.data;
+   return json(await rpc<Analytics>('admin_analytics',{p_token:token,p_days:days,p_source:source,p_list:list,p_offset:offset}));
+  }
   if(path.join('/')==='queue') {
    const url=new URL(request.url),status=url.searchParams.get('status')||'pending', offset=Number(url.searchParams.get('offset')||0);
    if(!['pending','approved','rejected'].includes(status)||!Number.isInteger(offset)||offset<0||offset>100000) throw new AdminError(400,'Invalid queue filter.');

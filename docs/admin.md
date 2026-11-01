@@ -1,6 +1,19 @@
-# Private touch-review desk
+# Private analytics and touch-review desk
 
 `https://juggledude.com/admin/` is a Next.js server-backed admin, using TanStack React Query for the queue, detail loading and finalisation. Marketing pages remain prerendered. A static-only host cannot serve the admin API.
+
+## Analytics
+
+After signing in, Analytics is the default view. Touch checks remains available in the workspace navigation, with its unsaved-decision confirmation preserved. Apply `supabase/migrations/202611010001_admin_analytics.sql` before deploying this version. This additive migration requires the existing profiles, juggling sessions, Apple subscription table and admin-session function. It adds a date index and a read-only, service-role-only `admin_analytics` RPC; no app data, subscription state or review decisions are modified.
+
+- Choose 7, 30 or 90 **German calendar days including today so far**, and all sessions, camera recordings or video imports. Device `completed_at` determines the activity date; `received_at` is separately shown as the sync time. Future-dated sessions are excluded. Daily charts include quiet days as zero.
+- Active players are distinct signed-in account IDs with a synced juggling session in the period. Returning players have sessions on two or more distinct days within that period; this is not a cohort retention rate. Accounts pending deletion are excluded throughout. Guests, app opens and Power Shot sessions are not represented. Development records are not automatically distinguishable from real app activity in the session table.
+- New accounts are profiles created in the period regardless of the source filter. Their table shows all saved sessions to date, including zero, rather than only sessions matching that filter.
+- App versions use each active player's most recent matching session. Country means the optional profile value, not inferred device location. Neither identifies installs or the full installed user base.
+- Linked Pro is a current snapshot across all dates, independent of the session filters. It counts distinct accounts with Production status 1 or 4 and unexpired `access_until_ms`, matching the backend's entitlement rule. Multiple transaction chains per person are counted once. Sandbox, revoked/expired records, pending-deletion accounts and unlinked guest purchases are excluded. The table shows the latest stored server update. This is not live Apple verification or revenue: promotional access may be included and delayed notifications can leave stored state stale. Use App Store Connect for paid sales and financial reporting.
+- The four detail lists paginate in groups of 25. Counts and groupings run in PostgreSQL over the complete filtered data, rather than over a REST result limited to 1,000 rows. Refresh retrieves a new snapshot; errors are displayed instead of fabricated zeroes. The endpoint allows fixed filters only, not arbitrary SQL, and retains the existing session checks, server-only credentials and private/no-store responses. It does not return emails, payment transaction IDs or media paths.
+
+Run `npm run test:analytics` for isolated PostgreSQL checks covering access denial, token expiry, parameter bounds, deletion/future-date exclusion, return days, calendar boundaries, empty data, source filters, version deduplication, production/grace eligibility and pagination. `scripts/tests/admin-http.mjs` also checks the real Next.js analytics route, cookies, no-store, invalid filters and revoked sessions against the local synthetic fixture. The fixture supplies demo-only analytics data; it is not imported by production code.
 
 ## Deployment
 

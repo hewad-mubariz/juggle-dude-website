@@ -8,6 +8,7 @@ async function call(path,body,extra={}){
  return response;
 }
 assert.equal((await call('queue')).status,401);
+assert.equal((await call('analytics')).status,401);
 assert.equal((await call('attempts/'+id+'/video')).status,401);
 assert.equal((await call('login',{email:'reviewer@example.test',password:'wrong'},{Origin:'https://untrusted.test'})).status,403);
 const login=await call('login',{email:'reviewer@example.test',password:'local fixture password'});
@@ -16,6 +17,21 @@ assert.match(login.headers.get('set-cookie'),/HttpOnly/i);assert.match(login.hea
 let queue=await (await call('queue?status=pending&offset=0')).json();
 assert.equal(queue.pending,1);assert.equal(queue.items[0].player_name,'Demo Player');
 
+for (const params of ['days=365','source=other','offset=-1','days=7&days=30','list=arbitrary','sql=select']) {
+ assert.equal((await call('analytics?'+params)).status,400);
+}
+const analyticsResponse=await call('analytics?days=30');
+assert.equal(analyticsResponse.status,200);assert.match(analyticsResponse.headers.get('cache-control'),/no-store/);
+const analytics=await analyticsResponse.json();
+assert.equal(analytics.summary.pro_accounts,3);assert.ok(analytics.summary.sessions>25);assert.equal(analytics.rows.length,25);
+assert.equal(analytics.daily.length,30);assert.equal(analytics.summary.sessions,analytics.daily.reduce((n,d)=>n+d.sessions,0));
+const imports=await (await call('analytics?days=30&source=gallery')).json();
+assert.ok(imports.summary.sessions<analytics.summary.sessions);assert.equal(imports.summary.pro_accounts,3);
+const next=await (await call('analytics?days=30&offset=25')).json();
+assert.equal(new Set([...analytics.rows,...next.rows].map(r=>r.user_id+'/'+r.id)).size,50);
+for (const list of ['players','accounts','pro']) {
+ const view=await (await call('analytics?days=30&list='+list)).json();assert.equal(view.list,list);assert.ok(view.total>0);
+}
 const base='attempts/'+id;
 const unverified=await call(base+'/finish',{requestId:crypto.randomUUID(),choices:[],count:null,startMS:null,endMS:null,reason:'Test',watched:true});
 assert.equal(unverified.status,422);
@@ -30,4 +46,5 @@ assert.equal((await call(base+'/finish',{...body,requestId:crypto.randomUUID()})
 const detail=await (await call(base)).json();assert.equal(detail.attempt.status,'approved');assert.equal(detail.attempt.reviewed_count,24);assert.equal(detail.previous.choices[1].decision,'reject');
 queue=await (await call('queue?status=approved&offset=0')).json();assert.equal(queue.approved,1);
 assert.equal((await call('logout',{})).status,200);assert.equal((await call('queue')).status,401,'revoked cookie refused');
+assert.equal((await call('analytics')).status,401,'analytics rejects a revoked cookie');
 console.log('Isolated HTTP checks passed: login, cookies, access/origin checks, video verification/ranges, partial batch, account readback, idempotency, stale conflict, and logout.');

@@ -31,6 +31,23 @@ await db.query('insert into profiles values($1,$2,null)',[user,'Demo Player']);
 await db.query('insert into juggling_sessions values($1,$2,30,23,1000,15000)',[user,session]);
 const report={version:1,durationMS:20000,complete:true,moments:[{kind:'handsUncertain',timeMS:2000,lastTimeMS:2000,clipStartMS:1000,clipEndMS:3200},{kind:'groundContact',timeMS:9000,lastTimeMS:9000,clipStartMS:8000,clipEndMS:10200}]};
 await db.query(`insert into leaderboard_attempts(id,user_id,session_id,status,submitted_at,proposed_count,proposed_start_ms,proposed_end_ms,duration_ms,video_sha256,video_bytes,object_path,touch_review) values($1,$2,$3,'pending',now(),25,1000,15000,20000,$4,$5,$6,$7)`,[id,user,session,digest,video.length,user+'/fixture.mp4',JSON.stringify(report)]);
+// Analytics fixture data stays in this isolated process; never seed production.
+await db.exec(`alter table profiles add column country_code text default 'DE', add column created_at timestamptz default now();
+alter table juggling_sessions add column duration_ms integer default 20000, add column source text default 'recording',
+ add column completed_at timestamptz default now(), add column received_at timestamptz default now(), add column app_version text default '1.2.0';
+create table private.apple_subscriptions(environment text, original_transaction_id text, user_id uuid, product_id text, status integer,
+ access_until_ms bigint, updated_at timestamptz default now());`);
+await db.exec(readFileSync(new URL('../../supabase/migrations/202611010001_admin_analytics.sql',import.meta.url),'utf8'));
+const names=['Alex Rivera','Jamie Parker','Sam Keller','Taylor Morgan','Morgan Lee','Robin Fischer','Charlie Rossi','Jordan Silva'];
+for(let i=0;i<names.length;i++){
+ const playerID='50000000-0000-4000-8000-'+String(i+1).padStart(12,'0');
+ await db.query(`insert into profiles(id,display_name,country_code,created_at) values($1,$2,$3,now()-($4::int*interval '1 day'))`,[playerID,names[i],['DE','GB','FR','DE','US',null,'IT','BR'][i],i]);
+ for(let n=0;n<12-i;n++) await db.query(`insert into juggling_sessions(user_id,id,touch_count,duration_ms,source,completed_at,app_version)
+ values($1,$2,$3,$4,$5,now()-($6::int*interval '1 day')-($7::int*interval '10 minutes'),$8)`,
+ [playerID,'60000000-0000-4000-8000-'+String((i+1)*100+n).padStart(12,'0'),20+n*7+i,18000+n*1000,n%3===0?'gallery':'recording',(n+i)%12,n,i%3===0?'1.1.0':'1.2.0']);
+ if(i<3)await db.query(`insert into private.apple_subscriptions values('Production',$1,$2,$3,$4,extract(epoch from now()+interval '10 days')*1000,now())`,
+ [String(i+1),playerID,i===1?'com.hewad.juggledude.pro.monthly':'com.hewad.juggledude.pro.yearly',i===2?4:1]);
+}
 const original=globalThis.fetch;
 globalThis.fetch=async(input,init={})=>{
  const u=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
@@ -43,7 +60,7 @@ globalThis.fetch=async(input,init={})=>{
   }
   if(u.pathname.startsWith('/rest/v1/rpc/')){
    const name=u.pathname.split('/').at(-1),body=JSON.parse(init.body);
-   if(!/^admin_review_[a-z_]+$/.test(name))throw new Error('Unexpected fixture RPC');
+   if(name!=='admin_analytics'&&!/^admin_review_[a-z_]+$/.test(name))throw new Error('Unexpected fixture RPC');
    const entries=Object.entries(body),args=entries.map(([k],i)=>`${k} => $${i+1}`).join(',');
    const result=await db.query(`select public.${name}(${args}) as result`,entries.map(([,v])=>typeof v==='object'&&v!==null?JSON.stringify(v):v));
    return Response.json(result.rows[0].result);
