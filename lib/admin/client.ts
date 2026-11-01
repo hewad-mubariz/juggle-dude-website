@@ -4,11 +4,11 @@ export class RequestError extends Error {
   constructor(message: string, public status: number) { super(message); }
 }
 
-export async function api<T>(path: string, body?: unknown): Promise<T> {
+export async function api<T>(path: string, body?: unknown, signal?: AbortSignal): Promise<T> {
   const url = new URL('/api/admin/' + path, window.location.origin);
   url.pathname = url.pathname.replace(/\/?$/, '/');
   const response = await fetch(url, {
-    method: body === undefined ? 'GET' : 'POST', credentials: 'same-origin', cache: 'no-store',
+    method: body === undefined ? 'GET' : 'POST', credentials: 'same-origin', cache: 'no-store', signal,
     ...(body === undefined ? {} : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
   });
   const data = await response.json();

@@ -2,8 +2,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
-import { analyticsSchema } from '../../lib/admin/validation';
-import type { Analytics } from '../../lib/admin/analytics';
+import { analyticsPlayerSchema, analyticsSchema } from '../../lib/admin/validation';
+import type { Analytics, PlayerDetail } from '../../lib/admin/analytics';
 
 const migration = readFileSync(new URL('../../supabase/migrations/202611010001_admin_analytics.sql', import.meta.url), 'utf8');
 const reviewMigration = readFileSync(new URL('../../supabase/migrations/202610230002_admin_review_panel.sql', import.meta.url), 'utf8');
@@ -14,15 +14,18 @@ const session = (n: number) => `30000000-0000-4000-8000-${String(n).padStart(12,
 
 async function database() {
   const db = new PGlite();
-  await db.exec(`create role anon; create role authenticated; create role service_role; create schema private;
+  await db.exec(`create role anon; create role authenticated; create role service_role; create schema private; create schema auth;
+    create table auth.users(id uuid primary key, email text, last_sign_in_at timestamptz);
     create table private.admin_review_sessions(token_hash text, expires_at timestamptz);
     create table profiles(id uuid primary key, display_name text, country_code text, created_at timestamptz, deletion_requested_at timestamptz);
     create table juggling_sessions(user_id uuid, id uuid, touch_count integer, duration_ms integer, source text,
-      completed_at timestamptz, received_at timestamptz default now(), app_version text, primary key(user_id,id));
+      completed_at timestamptz, received_at timestamptz default now(), app_version text, counter_version text default 'counter-test', score_status text default 'device_reported',
+      streak_touches integer, streak_start_ms integer, streak_end_ms integer, primary key(user_id,id));
     create table private.apple_subscriptions(environment text, original_transaction_id text, user_id uuid,
       product_id text, status integer, access_until_ms bigint, updated_at timestamptz default now());`);
   await db.exec(sessionFunction);
   await db.exec(migration);
+  await db.exec(readFileSync(new URL('../../supabase/migrations/202611020001_admin_analytics_details.sql', import.meta.url), 'utf8'));
   await db.query('insert into private.admin_review_sessions values ($1,now()+interval \'1 hour\')', [token]);
   await db.query(`insert into profiles values
     ($1,'Player A','DE',now()-interval '2 days',null),
@@ -45,6 +48,7 @@ async function database() {
     ('Sandbox','4',$3,'com.hewad.juggledude.pro.yearly',1,extract(epoch from now()+interval '1 day')*1000),
     ('Production','5',$4,'com.hewad.juggledude.pro.yearly',1,extract(epoch from now()+interval '1 day')*1000),
     ('Production','6',$5,'com.hewad.juggledude.pro.yearly',5,extract(epoch from now()+interval '1 day')*1000)`, [1, 2, 3, 4, 5].map(user));
+  await db.query('insert into auth.users values ($1,$2,now())', [user(1), 'player-a@example.test']);
   return db;
 }
 async function analytics(db: PGlite, args: unknown[] = [token, 7, 'all', 'sessions', 0]) {
@@ -128,5 +132,60 @@ test('empty data is real zero; invalid, expired and mobile callers fail closed',
     assert.equal(empty.daily.length, 7); assert.ok(empty.daily.every(d => d.sessions === 0));
     await db.exec("update private.admin_review_sessions set expires_at = now()-interval '1 minute'");
     await assert.rejects(analytics(db), /Unauthorized/);
+  } finally { await db.close(); }
+});
+
+async function player(db: PGlite, id = user(1), offset = 0, selected: string | null = null, key = token) {
+  return (await db.query<{ value: PlayerDetail | null }>('select public.admin_analytics_player($1,$2,$3,$4) as value', [key, id, offset, selected])).rows[0].value;
+}
+
+test('player detail returns contact, complete history and production status, scoped to the exact account', async () => {
+  const db = await database(); try {
+    const a = (await player(db, user(1), 0, session(1)))!;
+    assert.equal(a.profile.email, 'player-a@example.test');
+    assert.equal(a.summary.sessions, 2); assert.equal(a.summary.touches, 30);
+    assert.equal(a.summary.most_touches, 20); assert.equal(a.summary.latest_app_version, '1.2.0');
+    assert.equal(a.sessions.length, 2); assert.equal(a.selected_session?.touch_count, 10);
+    assert.equal(a.pro.active, true); assert.equal(a.pro.total, 2);
+    assert.ok(a.pro.subscriptions.every(s => s.has_access));
+    assert.equal(a.selected_session?.counter_version, 'counter-test');
+    assert.ok(!JSON.stringify(a).includes('original_transaction_id'));
+    const b = (await player(db, user(2), 0, session(1)))!;
+    assert.equal(b.selected_session?.touch_count, 30, 'shared UUID resolves only in selected account');
+    assert.equal(b.pro.active, false, 'expired timestamp overrides stored active status');
+    assert.equal(b.pro.subscriptions[0].status, 1, 'still shows stored status honestly');
+    assert.equal((await player(db, user(2), 0, session(2)))!.selected_session, null, 'does not leak another account session');
+    const empty = (await player(db, user(3)))!;
+    assert.equal(empty.summary.sessions, 0, 'future-dated session is excluded');
+    assert.equal(empty.pro.total, 0, 'sandbox is excluded'); assert.equal(empty.pro.active, false);
+    assert.equal(empty.profile.email, null); assert.equal(empty.summary.most_touches, null);
+    assert.equal((await player(db, user(5)))!.summary.sessions, 1, 'lifetime includes old sessions');
+    assert.equal((await player(db, user(5)))!.pro.active, false, 'revoked subscriptions do not grant access');
+    assert.equal(await player(db, user(4)), null, 'deletion pending hides account');
+    assert.equal(await player(db, user(99)), null, 'unknown account is absent');
+  } finally { await db.close(); }
+});
+
+test('player history pagination, strict route parameters and private authorization', async () => {
+  assert.deepEqual(analyticsPlayerSchema.parse({}), { offset: 0 });
+  for (const invalid of [{ offset: '1' }, { offset: '-25' }, { offset: '100025' }, { session: 'bad' }, { email: 'no' }]) {
+    assert.equal(analyticsPlayerSchema.safeParse(invalid).success, false);
+  }
+  const db = await database(); try {
+    for (let n = 100; n < 155; n++) await db.query(`insert into juggling_sessions(user_id,id,touch_count,duration_ms,source,completed_at,app_version)
+      values($1,$2,1,1000,'recording',now(),'1.2.0')`, [user(1), session(n)]);
+    const pages = await Promise.all([0, 25, 50].map(offset => player(db, user(1), offset, session(2))));
+    assert.deepEqual(pages.map(p => p!.sessions.length), [25, 25, 7]);
+    assert.equal(new Set(pages.flatMap(p => p!.sessions.map(s => s.id))).size, 57);
+    assert.ok(pages.every(p => p!.summary.sessions === 57 && p!.selected_session?.id === session(2)));
+    for (const role of ['anon', 'authenticated']) {
+      await db.exec(`set role ${role}`); await assert.rejects(player(db), /permission denied/); await db.exec('reset role');
+    }
+    await db.exec('set role service_role'); assert.ok(await player(db));
+    await assert.rejects(player(db, user(1), 0, null, 'wrong'), /Unauthorized/);
+    await assert.rejects(player(db, user(1), 1), /Invalid player/);
+    await db.exec('reset role');
+    await db.exec("update private.admin_review_sessions set expires_at = now()-interval '1 minute'");
+    await assert.rejects(player(db), /Unauthorized/);
   } finally { await db.close(); }
 });

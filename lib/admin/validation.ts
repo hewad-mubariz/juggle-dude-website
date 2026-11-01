@@ -2,6 +2,11 @@ import { z } from 'zod';
 import { momentKinds } from './types';
 export const loginSchema = z.object({ email: z.email().max(254), password: z.string().min(1).max(256) }).strict();
 export const idSchema = z.uuid();
+export const analyticsPlayerSchema = z.object({
+  offset: z.string().regex(/^(0|[1-9][0-9]{0,5})$/).default('0').transform(Number)
+    .refine(n => n <= 100000 && n % 25 === 0),
+  session: z.uuid().optional(),
+}).strict();
 export const analyticsSchema = z.object({
   days: z.enum(['7', '30', '90']).default('7').transform(Number),
   source: z.enum(['all', 'recording', 'gallery']).default('all'),

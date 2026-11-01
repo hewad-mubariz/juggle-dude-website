@@ -9,6 +9,7 @@ async function call(path,body,extra={}){
 }
 assert.equal((await call('queue')).status,401);
 assert.equal((await call('analytics')).status,401);
+assert.equal((await call('analytics/players/20000000-0000-4000-8000-000000000001')).status,401);
 assert.equal((await call('attempts/'+id+'/video')).status,401);
 assert.equal((await call('login',{email:'reviewer@example.test',password:'wrong'},{Origin:'https://untrusted.test'})).status,403);
 const login=await call('login',{email:'reviewer@example.test',password:'local fixture password'});
@@ -32,6 +33,13 @@ assert.equal(new Set([...analytics.rows,...next.rows].map(r=>r.user_id+'/'+r.id)
 for (const list of ['players','accounts','pro']) {
  const view=await (await call('analytics?days=30&list='+list)).json();assert.equal(view.list,list);assert.ok(view.total>0);
 }
+const playerPath='analytics/players/20000000-0000-4000-8000-000000000001';
+const playerResponse=await call(playerPath+'?session=30000000-0000-4000-8000-000000000001');
+assert.equal(playerResponse.status,200);assert.match(playerResponse.headers.get('cache-control'),/no-store/);
+const player=await playerResponse.json();assert.equal(player.profile.player,'Demo Player');assert.equal(player.selected_session.streak_touches,23);
+assert.equal((await call('analytics/players/not-a-uuid')).status,400);
+assert.equal((await call('analytics/players/20000000-0000-4000-8000-000000000099')).status,404);
+for(const params of ['offset=1','offset=0&offset=25','session=bad','sql=select'])assert.equal((await call(playerPath+'?'+params)).status,400);
 const base='attempts/'+id;
 const unverified=await call(base+'/finish',{requestId:crypto.randomUUID(),choices:[],count:null,startMS:null,endMS:null,reason:'Test',watched:true});
 assert.equal(unverified.status,422);
@@ -47,4 +55,5 @@ const detail=await (await call(base)).json();assert.equal(detail.attempt.status,
 queue=await (await call('queue?status=approved&offset=0')).json();assert.equal(queue.approved,1);
 assert.equal((await call('logout',{})).status,200);assert.equal((await call('queue')).status,401,'revoked cookie refused');
 assert.equal((await call('analytics')).status,401,'analytics rejects a revoked cookie');
+assert.equal((await call(playerPath)).status,401,'player details reject a revoked cookie');
 console.log('Isolated HTTP checks passed: login, cookies, access/origin checks, video verification/ranges, partial batch, account readback, idempotency, stale conflict, and logout.');

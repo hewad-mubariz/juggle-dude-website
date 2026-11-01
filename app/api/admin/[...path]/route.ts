@@ -2,8 +2,8 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { AdminError, attempt, available, config, cookieName, cookieOptions, failure, json, readJSON, requireSession, rpc, supabase, validateMutation, videoPath } from '@/lib/admin/server';
 import { newToken, passwordMatches, privateKey, sessionHash } from '@/lib/admin/security';
-import { analyticsSchema, finishSchema, idSchema, loginSchema } from '@/lib/admin/validation';
-import type { Analytics } from '@/lib/admin/analytics';
+import { analyticsPlayerSchema, analyticsSchema, finishSchema, idSchema, loginSchema } from '@/lib/admin/validation';
+import type { Analytics, PlayerDetail } from '@/lib/admin/analytics';
 import type { Queue, ReviewDetail } from '@/lib/admin/types';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
@@ -15,6 +15,15 @@ export async function GET(request:Request,context:Context) {
   const token=await requireSession();
   const {path}=await context.params;
   if(path.join('/')==='session') return json({email:config().email});
+  if(path.length===3&&path[0]==='analytics'&&path[1]==='players') {
+   if(!idSchema.safeParse(path[2]).success) throw new AdminError(400,'Invalid player ID.');
+   const params=new URL(request.url).searchParams;
+   const parsed=analyticsPlayerSchema.safeParse(Object.fromEntries(params));
+   if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid session or history page.');
+   const detail=await rpc<PlayerDetail|null>('admin_analytics_player',{p_token:token,p_user_id:path[2],p_offset:parsed.data.offset,p_session_id:parsed.data.session??null});
+   if(!detail) throw new AdminError(404,'This account is no longer available.');
+   return json(detail);
+  }
   if(path.join('/')==='analytics') {
    const params=new URL(request.url).searchParams;
    const parsed=analyticsSchema.safeParse(Object.fromEntries(params));

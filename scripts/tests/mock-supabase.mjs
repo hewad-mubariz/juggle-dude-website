@@ -14,7 +14,7 @@ process.env.SUPABASE_SERVICE_ROLE_KEY='fixture-key';
 const fixtureFile=process.env.ADMIN_FIXTURE_VIDEO||'/tmp/juggledude-admin-fixture.mp4';
 const video=readFileSync(fixtureFile),digest=createHash('sha256').update(video).digest('hex');
 const db=new PGlite();
-await db.exec(`create role anon;create role authenticated;create role service_role;create schema private;
+await db.exec(`create role anon;create role authenticated;create role service_role;create schema private; create schema auth; create table auth.users(id uuid primary key,email text,last_sign_in_at timestamptz);
 create table profiles(id uuid primary key,display_name text,deletion_requested_at timestamptz);
 create table juggling_sessions(user_id uuid,id uuid,touch_count integer,streak_touches integer,streak_start_ms integer,streak_end_ms integer,primary key(user_id,id));
 create table leaderboard_attempts(id uuid primary key,user_id uuid,session_id uuid,status text,submitted_at timestamptz,created_at timestamptz default now(),
@@ -34,15 +34,17 @@ await db.query(`insert into leaderboard_attempts(id,user_id,session_id,status,su
 // Analytics fixture data stays in this isolated process; never seed production.
 await db.exec(`alter table profiles add column country_code text default 'DE', add column created_at timestamptz default now();
 alter table juggling_sessions add column duration_ms integer default 20000, add column source text default 'recording',
- add column completed_at timestamptz default now(), add column received_at timestamptz default now(), add column app_version text default '1.2.0';
+ add column completed_at timestamptz default now(), add column received_at timestamptz default now(), add column app_version text default '1.2.0', add column counter_version text default 'counter-test', add column score_status text default 'device_reported';
 create table private.apple_subscriptions(environment text, original_transaction_id text, user_id uuid, product_id text, status integer,
  access_until_ms bigint, updated_at timestamptz default now());`);
 await db.exec(readFileSync(new URL('../../supabase/migrations/202611010001_admin_analytics.sql',import.meta.url),'utf8'));
+await db.exec(readFileSync(new URL('../../supabase/migrations/202611020001_admin_analytics_details.sql',import.meta.url),'utf8'));
 const names=['Alex Rivera','Jamie Parker','Sam Keller','Taylor Morgan','Morgan Lee','Robin Fischer','Charlie Rossi','Jordan Silva'];
 for(let i=0;i<names.length;i++){
  const playerID='50000000-0000-4000-8000-'+String(i+1).padStart(12,'0');
  await db.query(`insert into profiles(id,display_name,country_code,created_at) values($1,$2,$3,now()-($4::int*interval '1 day'))`,[playerID,names[i],['DE','GB','FR','DE','US',null,'IT','BR'][i],i]);
- for(let n=0;n<12-i;n++) await db.query(`insert into juggling_sessions(user_id,id,touch_count,duration_ms,source,completed_at,app_version)
+ await db.query('insert into auth.users values($1,$2,now())',[playerID,names[i].toLowerCase().replace(' ','.')+'@example.test']);
+ for(let n=0;n<32-i;n++) await db.query(`insert into juggling_sessions(user_id,id,touch_count,duration_ms,source,completed_at,app_version)
  values($1,$2,$3,$4,$5,now()-($6::int*interval '1 day')-($7::int*interval '10 minutes'),$8)`,
  [playerID,'60000000-0000-4000-8000-'+String((i+1)*100+n).padStart(12,'0'),20+n*7+i,18000+n*1000,n%3===0?'gallery':'recording',(n+i)%12,n,i%3===0?'1.1.0':'1.2.0']);
  if(i<3)await db.query(`insert into private.apple_subscriptions values('Production',$1,$2,$3,$4,extract(epoch from now()+interval '10 days')*1000,now())`,
@@ -60,7 +62,8 @@ globalThis.fetch=async(input,init={})=>{
   }
   if(u.pathname.startsWith('/rest/v1/rpc/')){
    const name=u.pathname.split('/').at(-1),body=JSON.parse(init.body);
-   if(name!=='admin_analytics'&&!/^admin_review_[a-z_]+$/.test(name))throw new Error('Unexpected fixture RPC');
+   if(!['admin_analytics','admin_analytics_player'].includes(name)&&!/^admin_review_[a-z_]+$/.test(name))throw new Error('Unexpected fixture RPC');
+   if(process.env.ADMIN_FIXTURE_DELAY_MS && name.startsWith('admin_analytics')) await new Promise(resolve=>setTimeout(resolve,Number(process.env.ADMIN_FIXTURE_DELAY_MS)));
    const entries=Object.entries(body),args=entries.map(([k],i)=>`${k} => $${i+1}`).join(',');
    const result=await db.query(`select public.${name}(${args}) as result`,entries.map(([,v])=>typeof v==='object'&&v!==null?JSON.stringify(v):v));
    return Response.json(result.rows[0].result);
