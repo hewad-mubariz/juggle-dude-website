@@ -36,5 +36,6 @@ export const site = {
   operatorDetailsReady: supportEmailConfirmed && Boolean(contactAddress),
   privacyApproved: process.env.NEXT_PUBLIC_PRIVACY_APPROVED === "true" && supportEmailConfirmed && Boolean(contactAddress && deletionInstructions),
   policyDate: "23 October 2026",
+  privacyPolicyDate: "2 November 2026",
   appleEulaUrl: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/",
 };
