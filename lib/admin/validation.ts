@@ -2,6 +2,9 @@ import { z } from 'zod';
 import { momentKinds } from './types';
 export const loginSchema = z.object({ email: z.email().max(254), password: z.string().min(1).max(256) }).strict();
 export const idSchema = z.uuid();
+export const leaderboardSchema = z.object({
+  period: z.enum(['week', 'all_time']).default('week'),
+}).strict();
 export const analyticsPlayerSchema = z.object({
   offset: z.string().regex(/^(0|[1-9][0-9]{0,5})$/).default('0').transform(Number)
     .refine(n => n <= 100000 && n % 25 === 0),

@@ -2,7 +2,8 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { AdminError, attempt, available, config, cookieName, cookieOptions, failure, json, readJSON, requireSession, rpc, supabase, validateMutation, videoPath } from '@/lib/admin/server';
 import { newToken, passwordMatches, privateKey, sessionHash } from '@/lib/admin/security';
-import { analyticsPlayerSchema, analyticsSchema, finishSchema, idSchema, loginSchema } from '@/lib/admin/validation';
+import { analyticsPlayerSchema, analyticsSchema, finishSchema, idSchema, leaderboardSchema, loginSchema } from '@/lib/admin/validation';
+import { leaderboard, participation } from '@/lib/admin/leaderboard-server';
 import type { Analytics, PlayerDetail } from '@/lib/admin/analytics';
 import type { Queue, ReviewDetail } from '@/lib/admin/types';
 export const runtime='nodejs';
@@ -15,6 +16,12 @@ export async function GET(request:Request,context:Context) {
   const token=await requireSession();
   const {path}=await context.params;
   if(path.join('/')==='session') return json({email:config().email});
+  if(path.join('/')==='leaderboard') {
+   const params=new URL(request.url).searchParams;
+   const parsed=leaderboardSchema.safeParse(Object.fromEntries(params));
+   if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid leaderboard period.');
+   return json(await leaderboard(parsed.data.period));
+  }
   if(path.length===3&&path[0]==='analytics'&&path[1]==='players') {
    if(!idSchema.safeParse(path[2]).success) throw new AdminError(400,'Invalid player ID.');
    const params=new URL(request.url).searchParams;
@@ -22,14 +29,18 @@ export async function GET(request:Request,context:Context) {
    if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid session or history page.');
    const detail=await rpc<PlayerDetail|null>('admin_analytics_player',{p_token:token,p_user_id:path[2],p_offset:parsed.data.offset,p_session_id:parsed.data.session??null});
    if(!detail) throw new AdminError(404,'This account is no longer available.');
-   return json(detail);
+   const joined=await participation([path[2]]);
+   if(!joined.has(path[2])) throw new AdminError(404,'This account is no longer available.');
+   return json({...detail,profile:{...detail.profile,leaderboard_visible:joined.get(path[2])}});
   }
   if(path.join('/')==='analytics') {
    const params=new URL(request.url).searchParams;
    const parsed=analyticsSchema.safeParse(Object.fromEntries(params));
    if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid analytics period, source and page.');
    const {days,source,list,offset}=parsed.data;
-   return json(await rpc<Analytics>('admin_analytics',{p_token:token,p_days:days,p_source:source,p_list:list,p_offset:offset}));
+   const data=await rpc<Analytics>('admin_analytics',{p_token:token,p_days:days,p_source:source,p_list:list,p_offset:offset});
+   const joined=await participation(data.rows.map(row=>row.user_id));
+   return json({...data,rows:data.rows.map(row=>({...row,leaderboard_visible:joined.get(row.user_id)??null}))});
   }
   if(path.join('/')==='queue') {
    const url=new URL(request.url),status=url.searchParams.get('status')||'pending', offset=Number(url.searchParams.get('offset')||0);

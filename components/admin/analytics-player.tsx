@@ -5,6 +5,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, RequestError } from '@/lib/admin/client';
 import type { PlayerDetail, PlayerSession } from '@/lib/admin/analytics';
 import { country, duration, number, plan, time } from '@/lib/admin/analytics-format';
+import { LeaderboardStatus } from './leaderboard-status';
 
 export function PlayerDetails({ userId, sessionId, onClose }: { userId: string; sessionId?: string; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -54,8 +55,10 @@ export function PlayerDetails({ userId, sessionId, onClose }: { userId: string; 
             <Field label="Last account sign-in">{time(data.profile.last_sign_in_at, 'Not available')}</Field>
             <Field label="User ID"><code>{data.profile.user_id}</code></Field>
             <Field label="Latest session app version">{data.summary.latest_app_version || 'No synced session'}</Field>
+            <Field label="Leaderboard participation"><LeaderboardStatus joined={data.profile.leaderboard_visible} /></Field>
           </dl>
           <p className="analytics-detail-note">Email can be an Apple private relay address. Account sign-in is not a measure of app usage. All times are German time.</p>
+          <p className="analytics-detail-note">Leaderboard participation is the current profile setting. A joined player appears in the rankings once they have a qualifying recorded streak. A join date is not stored.</p>
         </section>
         <section className="analytics-detail-section" aria-label="Player lifetime activity">
           <h3>Lifetime activity</h3><p className="analytics-detail-note">All saved dates and sources, independent of the dashboard filters. Device-reported counts; videos stay on the player’s device.</p>

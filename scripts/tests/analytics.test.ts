@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { PGlite } from '@electric-sql/pglite';
-import { analyticsPlayerSchema, analyticsSchema } from '../../lib/admin/validation';
+import { analyticsPlayerSchema, analyticsSchema, leaderboardSchema } from '../../lib/admin/validation';
 import type { Analytics, PlayerDetail } from '../../lib/admin/analytics';
 
 const migration = readFileSync(new URL('../../supabase/migrations/202611010001_admin_analytics.sql', import.meta.url), 'utf8');
@@ -188,4 +188,13 @@ test('player history pagination, strict route parameters and private authorizati
     await db.exec("update private.admin_review_sessions set expires_at = now()-interval '1 minute'");
     await assert.rejects(player(db), /Unauthorized/);
   } finally { await db.close(); }
+});
+
+
+test('leaderboard accepts only the app periods, without arbitrary data filters', () => {
+  assert.deepEqual(leaderboardSchema.parse({}), {period:'week'});
+  assert.deepEqual(leaderboardSchema.parse({period:'all_time'}), {period:'all_time'});
+  for (const invalid of [{period:'month'}, {period:null}, {user_id:user(1)}, {limit:'1000'}, {sql:'select *'}]) {
+    assert.equal(leaderboardSchema.safeParse(invalid).success, false);
+  }
 });
