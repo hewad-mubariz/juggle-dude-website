@@ -5,6 +5,7 @@ import type { FormEvent } from 'react';
 import { momentClip, momentID, momentTitle, timestamp } from '@/lib/admin/types';
 import type { Attempt, Choice, FinishInput, Moment, Queue, ReviewDetail } from '@/lib/admin/types';
 import { api, RequestError } from '@/lib/admin/client';
+import { AppLogo } from '@/components/app-logo';
 import { AnalyticsPanel } from './analytics-panel';
 import { LeaderboardPanel } from './leaderboard-panel';
 import './admin.css';
@@ -14,7 +15,7 @@ function Icon({name,...props}:{name:'check'|'close'|'play'|'shield'|'arrow'|'ref
  const paths={trophy:'M8 3h8v6a4 4 0 0 1-8 0V3Zm0 2H4v3a4 4 0 0 0 4 4m8-7h4v3a4 4 0 0 1-4 4m-4 1v5m-4 3h8m-8 0v-3h8v3',chart:'M4 20V4m0 16h17M8 16v-5m5 5V6m5 10V9',check:'m5 12 4 4L19 6',close:'m6 6 12 12M6 18 18 6',play:'m9 5 11 7-11 7Z',shield:'M12 3 3 7v5c0 5 9 9 9 9s9-4 9-9V7ZM8 12l3 3 5-6',arrow:'M4 12h16m-6-6 6 6-6 6',refresh:'M20 7v5h-5M4 17v-5h5M6 7a7 7 0 0 1 12-1l2 3M4 15l2 3a7 7 0 0 0 12-1',logout:'M9 4H4v16h5m6-14 6 6-6 6m-5-6h11',inbox:'M3 4h18v16H3ZM3 13h5l2 3h4l2-3h5'};
  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}><path d={paths[name]}/></svg>;
 }
-function Brand() { return <a href="/" className="admin-brand" aria-label="Juggle Dude home">JUGGLE <span>DUDE.</span></a>; }
+function Brand() { return <a href="/" className="admin-brand" aria-label="Juggle Dude home"><AppLogo className="size-9" /><span>JUGGLE <em>DUDE.</em></span></a>; }
 function Notice({children}:{children:React.ReactNode}) { return <div role="alert" className="admin-notice">{children}</div>; }
 export function AdminPanel() {
  const [client]=useState(()=>new QueryClient({defaultOptions:{queries:{retry:(n,e)=>!(e instanceof RequestError&&[401,403,400,404].includes(e.status))&&n<1,staleTime:10000,refetchOnWindowFocus:false},mutations:{retry:false}}}));

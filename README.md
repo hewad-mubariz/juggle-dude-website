@@ -101,6 +101,8 @@ Provider processor/transfer arrangements and final app release checks remain in 
 
 ## Images
 
+The website logo, browser icon and Apple touch icon use the iOS app's boot-and-ball artwork from `kicklab/Assets.xcassets/AppIcon.appiconset/AppIcon-Default.png` in the app repository. The shared `AppLogo` component uses a 256 px WebP copy; `app/icon.png` is 64 px and `app/apple-icon.png` is 180 px. Keep these assets in sync when the app icon changes.
+
 The approved generated football photographs are in `public/images/`. The built-in image generation prompts are recorded in `docs/image-generation.json`. They are illustrative marketing photography, not screenshots or footage from the app.
 
 ## CI
