@@ -57,6 +57,9 @@ for(let i=0;i<names.length;i++){
 await db.exec(`update juggling_sessions set streak_touches=greatest(1,touch_count-3),streak_start_ms=0,streak_end_ms=duration_ms where streak_touches is null;
 insert into profiles(id,display_name,leaderboard_visible) values('50000000-0000-4000-8000-000000000099','Joined, waiting',true);`);
 await db.exec("update private.apple_subscriptions set offer_code_redeemed=true where original_transaction_id='1'");
+await db.exec(readFileSync(new URL('../../supabase/migrations/202611140002_admin_invite_inventory.sql',import.meta.url),'utf8'));
+await db.exec(`insert into private.admin_invite_batches(id,label,plan,expires_at) values('100','Monthly tester invite','monthly',now()+interval '15 days'),('200','Yearly tester invite','yearly',now()+interval '15 days');`);
+for(let i=1;i<=60;i++)await db.query('insert into private.admin_invite_codes(batch_id,code,ordinal) values($1,$2,$3)',[i<=30?'100':'200','FAKECODE'+String(i).padStart(10,'0'),i<=30?i:i-30]);
 const original=globalThis.fetch;
 globalThis.fetch=async(input,init={})=>{
  const u=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
@@ -69,7 +72,7 @@ globalThis.fetch=async(input,init={})=>{
   }
   if(u.pathname.startsWith('/rest/v1/rpc/')){
    const name=u.pathname.split('/').at(-1),body=JSON.parse(init.body);
-   if(!['admin_analytics','admin_analytics_filtered','admin_analytics_player','reviewed_juggling_leaderboard'].includes(name)&&!/^admin_review_[a-z_]+$/.test(name))throw new Error('Unexpected fixture RPC');
+   if(!['admin_analytics','admin_analytics_filtered','admin_analytics_player','reviewed_juggling_leaderboard'].includes(name)&&!/^admin_review_[a-z_]+$/.test(name)&&!['admin_invite_inventory','admin_invite_find','admin_invite_copy','admin_invite_mark'].includes(name))throw new Error('Unexpected fixture RPC');
    if(process.env.ADMIN_FIXTURE_DELAY_MS && (name.startsWith('admin_analytics')||name==='reviewed_juggling_leaderboard')) await new Promise(resolve=>setTimeout(resolve,Number(process.env.ADMIN_FIXTURE_DELAY_MS)));
    const entries=Object.entries(body),args=entries.map(([k],i)=>`${k} => $${i+1}`).join(',');
    const result=await db.query(`select public.${name}(${args}) as result`,entries.map(([,v])=>typeof v==='object'&&v!==null?JSON.stringify(v):v));

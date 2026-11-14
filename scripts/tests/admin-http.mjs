@@ -8,6 +8,7 @@ async function call(path,body,extra={}){
  return response;
 }
 assert.equal((await call('queue')).status,401);
+assert.equal((await call('invites')).status,401);
 assert.equal((await call('analytics')).status,401);
 assert.equal((await call('leaderboard')).status,401);
 assert.equal((await call('analytics/players/20000000-0000-4000-8000-000000000001')).status,401);
@@ -16,6 +17,17 @@ assert.equal((await call('login',{email:'reviewer@example.test',password:'wrong'
 const login=await call('login',{email:'reviewer@example.test',password:'local fixture password'});
 assert.equal(login.status,200);cookie=login.headers.get('set-cookie').split(';')[0];
 assert.match(login.headers.get('set-cookie'),/HttpOnly/i);assert.match(login.headers.get('set-cookie'),/Secure/i);assert.match(login.headers.get('set-cookie'),/SameSite=strict/i);
+const inventory=await (await call('invites')).json();assert.equal(inventory.total,60);
+assert.ok(!JSON.stringify(inventory).includes('FAKECODE'));
+assert.equal((await call('invites?code=FAKECODE0000000001')).status,400);
+const found=await (await call('invites/find',{code:'FAKECODE0000000001'})).json();
+assert.equal(found.suffix,'0001');
+assert.equal((await call('invites/'+found.id+'/copy',{}, {Origin:'https://untrusted.test'})).status,403);
+assert.equal((await call('invites/'+found.id+'/copy',{})).status,200);
+const used=await (await call('invites/'+found.id+'/mark',{used:true,version:found.version})).json();assert.ok(used.marked_used_at);
+assert.equal((await call('invites/'+found.id+'/copy',{})).status,409);
+assert.equal((await call('invites/'+found.id+'/mark',{used:false,version:used.version})).status,200);
+assert.equal((await call('invites/'+found.id+'/copy',{})).status,200);
 let queue=await (await call('queue?status=pending&offset=0')).json();
 assert.equal(queue.pending,1);assert.equal(queue.items[0].player_name,'Demo Player');
 

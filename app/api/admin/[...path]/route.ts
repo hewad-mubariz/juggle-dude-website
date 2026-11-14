@@ -2,7 +2,8 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { AdminError, attempt, available, config, cookieName, cookieOptions, failure, json, readJSON, requireSession, rpc, supabase, validateMutation, videoPath } from '@/lib/admin/server';
 import { newToken, passwordMatches, privateKey, sessionHash } from '@/lib/admin/security';
-import { analyticsPlayerSchema, analyticsSchema, finishSchema, idSchema, leaderboardSchema, loginSchema } from '@/lib/admin/validation';
+import { analyticsPlayerSchema, analyticsSchema, finishSchema, idSchema, inviteFindSchema, inviteInventorySchema, inviteMarkSchema, leaderboardSchema, loginSchema } from '@/lib/admin/validation';
+import type { InviteCode, InviteInventory } from '@/lib/admin/invites';
 import { leaderboard, participation } from '@/lib/admin/leaderboard-server';
 import type { Analytics, PlayerDetail } from '@/lib/admin/analytics';
 import type { Queue, ReviewDetail } from '@/lib/admin/types';
@@ -16,6 +17,13 @@ export async function GET(request:Request,context:Context) {
   const token=await requireSession();
   const {path}=await context.params;
   if(path.join('/')==='session') return json({email:config().email});
+  if(path.join('/')==='invites') {
+   const params=new URL(request.url).searchParams;
+   const parsed=inviteInventorySchema.safeParse(Object.fromEntries(params));
+   if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid code batch, status and page.');
+   const {batch,status,offset}=parsed.data;
+   return json(await rpc<InviteInventory>('admin_invite_inventory',{p_token:token,p_batch:batch,p_status:status,p_offset:offset}));
+  }
   if(path.join('/')==='leaderboard') {
    const params=new URL(request.url).searchParams;
    const parsed=leaderboardSchema.safeParse(Object.fromEntries(params));
@@ -95,6 +103,29 @@ export async function POST(request:Request,context:Context) {
    return json({email:cfg.email});
   }
   const token=await requireSession();
+  if(path.join('/')==='invites/find') {
+   const parsed=inviteFindSchema.safeParse(await readJSON(request,256));
+   if(!parsed.success) throw new AdminError(400,'Paste the exact one-time code, without a link.');
+   const row=await rpc<InviteCode|null>('admin_invite_find',{p_token:token,p_code:parsed.data.code});
+   if(!row) throw new AdminError(404,'This code is not in the imported lists.');
+   return json(row);
+  }
+  if(path.length===3&&path[0]==='invites'&&idSchema.safeParse(path[1]).success) {
+   if(path[2]==='copy') {
+    const input=await readJSON(request,64);
+    if(!input||Array.isArray(input)||Object.keys(input).length) throw new AdminError(400,'Invalid copy request.');
+    const value=await rpc<{code:string;url:string}|null>('admin_invite_copy',{p_token:token,p_id:path[1]});
+    if(!value) throw new AdminError(409,'This code is marked used, expired or no longer available. Refresh the list.');
+    return json(value);
+   }
+   if(path[2]==='mark') {
+    const parsed=inviteMarkSchema.safeParse(await readJSON(request,256));
+    if(!parsed.success) throw new AdminError(400,'Choose a valid code status.');
+    const value=await rpc<InviteCode|null>('admin_invite_mark',{p_token:token,p_id:path[1],p_used:parsed.data.used,p_version:parsed.data.version});
+    if(!value) throw new AdminError(404,'This code no longer exists.');
+    return json(value);
+   }
+  }
   if(path.join('/')==='logout') {
    await rpc('admin_review_logout',{p_token:token});
    (await cookies()).set(cookieName,'',{...cookieOptions,maxAge:0});
