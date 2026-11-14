@@ -25,13 +25,19 @@ for (const params of ['days=365','source=other','offset=-1','days=7&days=30','li
 const analyticsResponse=await call('analytics?days=30');
 assert.equal(analyticsResponse.status,200);assert.match(analyticsResponse.headers.get('cache-control'),/no-store/);
 const analytics=await analyticsResponse.json();
-assert.equal(analytics.summary.pro_accounts,3);assert.ok(analytics.summary.sessions>25);assert.equal(analytics.rows.length,25);
+assert.equal(analytics.summary.pro_accounts,2);assert.ok(analytics.summary.sessions>25);assert.equal(analytics.rows.length,25);
 assert.ok(analytics.rows.every(row=>typeof row.leaderboard_visible==='boolean'));
 assert.ok(analytics.rows.some(row=>row.leaderboard_visible===true));
 assert.ok(analytics.rows.some(row=>row.leaderboard_visible===false));
 assert.equal(analytics.daily.length,30);assert.equal(analytics.summary.sessions,analytics.daily.reduce((n,d)=>n+d.sessions,0));
+const all=await (await call('analytics?days=30&cohort=all')).json();
+assert.equal(all.summary.pro_accounts,3);assert.ok(all.summary.sessions>analytics.summary.sessions);
+assert.equal(analytics.cohort,'exclude_invites');assert.equal(analytics.invite_code_accounts,1);
+const invites=await (await call('analytics?days=30&cohort=invites_only')).json();
+assert.equal(invites.summary.players,1);assert.equal(invites.summary.sessions+analytics.summary.sessions,all.summary.sessions);
+assert.equal((await call('analytics?cohort=bogus')).status,400);
 const imports=await (await call('analytics?days=30&source=gallery')).json();
-assert.ok(imports.summary.sessions<analytics.summary.sessions);assert.equal(imports.summary.pro_accounts,3);
+assert.ok(imports.summary.sessions<analytics.summary.sessions);assert.equal(imports.summary.pro_accounts,2);
 const next=await (await call('analytics?days=30&offset=25')).json();
 assert.equal(new Set([...analytics.rows,...next.rows].map(r=>r.user_id+'/'+r.id)).size,50);
 for (const list of ['players','accounts','pro']) {

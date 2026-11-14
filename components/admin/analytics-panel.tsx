@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { RequestError } from '@/lib/admin/client';
 import { analyticsDays } from '@/lib/admin/analytics';
-import type { Analytics, AnalyticsDaily, AnalyticsDays, AnalyticsList, AnalyticsSource } from '@/lib/admin/analytics';
+import type { Analytics, AnalyticsCohort, AnalyticsDaily, AnalyticsDays, AnalyticsList, AnalyticsSource } from '@/lib/admin/analytics';
 import { LeaderboardStatus } from './leaderboard-status';
 import { PlayerDetails } from './analytics-player';
 import { analyticsQuery } from '@/lib/admin/analytics-query';
@@ -21,6 +21,7 @@ const tabs: { id: AnalyticsList; label: string; help: string }[] = [
 export function AnalyticsPanel() {
   const cache = useQueryClient();
   const [days, setDays] = useState<AnalyticsDays>(7);
+  const [cohort, setCohort] = useState<AnalyticsCohort>('exclude_invites');
   const [source, setSource] = useState<AnalyticsSource>('all');
   const [list, setList] = useState<AnalyticsList>('sessions');
   const [offset, setOffset] = useState(0);
@@ -28,10 +29,10 @@ export function AnalyticsPanel() {
   const table = useRef<HTMLElement>(null);
   // Overview has its own stable key: changing a table tab never removes the charts.
   // The initial sessions table shares this query, so the first request is deduplicated.
-  const overview = useQuery(analyticsQuery(days, source, 'sessions', 0));
+  const overview = useQuery(analyticsQuery(days, source, 'sessions', 0, cohort));
   const query = useQuery({
-    ...analyticsQuery(days, source, list, offset),
-    placeholderData: previous => previous?.list === list && previous.days === days && previous.source === source ? previous : undefined,
+    ...analyticsQuery(days, source, list, offset, cohort),
+    placeholderData: previous => previous?.list === list && previous.days === days && previous.source === source && previous.cohort === cohort ? previous : undefined,
   });
   useEffect(() => {
     if ([overview.error, query.error].some(error => error instanceof RequestError && [401, 403].includes(error.status))) {
@@ -40,8 +41,8 @@ export function AnalyticsPanel() {
   }, [overview.error, query.error, cache]);
   useEffect(() => {
     if (!overview.data) return;
-    for (const tab of tabs) if (tab.id !== 'sessions') void cache.prefetchQuery(analyticsQuery(days, source, tab.id, 0));
-  }, [overview.data, days, source, cache]);
+    for (const tab of tabs) if (tab.id !== 'sessions') void cache.prefetchQuery(analyticsQuery(days, source, tab.id, 0, cohort));
+  }, [overview.data, days, source, cohort, cache]);
   const data = overview.data;
   const records = query.data;
   const tab = tabs.find(t => t.id === list)!;
@@ -65,9 +66,13 @@ export function AnalyticsPanel() {
       <label>Session source<select value={source} onChange={e => { setSource(e.target.value as AnalyticsSource); setOffset(0); }}>
         <option value="all">All sessions</option><option value="recording">Camera recordings</option><option value="gallery">Video imports</option>
       </select></label>
+      <label>Invite-code players<select value={cohort} onChange={e => { setCohort(e.target.value as AnalyticsCohort); setOffset(0); setSelected(null); }}>
+        <option value="exclude_invites">Exclude invite-code players</option><option value="all">Include all players</option><option value="invites_only">Only invite-code players</option>
+      </select></label>
       <span className="analytics-updated">{data ? `Updated ${time(data.generated_at)}` : 'Loading snapshot…'} · German time</span>
     </div>
     <p className="analytics-scope">Synced juggling sessions from signed-in players. Guest activity, app opens and Power Shot usage aren’t included. Periods include today so far.</p>
+    {data && <p className="analytics-scope" role="status">{number(data.invite_code_accounts)} {data.invite_code_accounts === 1 ? 'account has' : 'accounts have'} a verified invite-code purchase. {cohort === 'exclude_invites' ? 'Their activity is excluded from every total, chart and list below.' : cohort === 'invites_only' ? 'Only their activity is shown below.' : 'All players are included below.'} This applies even after their invite expires.</p>}
     {overview.error && <div role="alert" className="admin-notice">{data ? 'Showing the last snapshot. ' : ''}Analytics couldn’t refresh. {overview.error.message} <button onClick={refresh}>Retry analytics</button></div>}
     {!data ? <div className="analytics-loading" role="status">{overview.error ? 'The overview is unavailable.' : 'Loading your activity…'}</div> : <>
       <section className="admin-stats analytics-stats" aria-label="Analytics overview">

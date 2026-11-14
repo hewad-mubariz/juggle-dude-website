@@ -22,10 +22,13 @@ async function database() {
       completed_at timestamptz, received_at timestamptz default now(), app_version text, counter_version text default 'counter-test', score_status text default 'device_reported',
       streak_touches integer, streak_start_ms integer, streak_end_ms integer, primary key(user_id,id));
     create table private.apple_subscriptions(environment text, original_transaction_id text, user_id uuid,
-      product_id text, status integer, access_until_ms bigint, updated_at timestamptz default now());`);
+      product_id text, status integer, access_until_ms bigint, updated_at timestamptz default now(),
+      expires_at_ms bigint default 0, signed_at_ms bigint default 0, primary key(environment, original_transaction_id));`);
   await db.exec(sessionFunction);
   await db.exec(migration);
   await db.exec(readFileSync(new URL('../../supabase/migrations/202611020001_admin_analytics_details.sql', import.meta.url), 'utf8'));
+  await db.exec(readFileSync(new URL('../../supabase/migrations/202611140000_subscription_offer_codes.sql', import.meta.url), 'utf8'));
+  await db.exec(readFileSync(new URL('../../supabase/migrations/202611140001_admin_analytics_invites.sql', import.meta.url), 'utf8'));
   await db.query('insert into private.admin_review_sessions values ($1,now()+interval \'1 hour\')', [token]);
   await db.query(`insert into profiles values
     ($1,'Player A','DE',now()-interval '2 days',null),
@@ -56,8 +59,8 @@ async function analytics(db: PGlite, args: unknown[] = [token, 7, 'all', 'sessio
 }
 
 test('analytics accepts only bounded presets and whole pages', () => {
-  assert.deepEqual(analyticsSchema.parse({}), { days: 7, source: 'all', list: 'sessions', offset: 0 });
-  for (const value of [{ days: '365' }, { source: 'bad' }, { list: 'sql' }, { offset: '-25' }, { offset: '1' }, { offset: '100025' }, { offset: '' }, { sql: 'select *' }]) {
+  assert.deepEqual(analyticsSchema.parse({}), { days: 7, source: 'all', list: 'sessions', offset: 0, cohort: 'exclude_invites' });
+  for (const value of [{ cohort: 'guessed' }, { days: '365' }, { source: 'bad' }, { list: 'sql' }, { offset: '-25' }, { offset: '1' }, { offset: '100025' }, { offset: '' }, { sql: 'select *' }]) {
     assert.equal(analyticsSchema.safeParse(value).success, false);
   }
 });
@@ -197,4 +200,60 @@ test('leaderboard accepts only the app periods, without arbitrary data filters',
   for (const invalid of [{period:'month'}, {period:null}, {user_id:user(1)}, {limit:'1000'}, {sql:'select *'}]) {
     assert.equal(leaderboardSchema.safeParse(invalid).success, false);
   }
+});
+
+async function cohort(db: PGlite, mode = 'exclude_invites', list = 'sessions', offset = 0, source = 'all', key = token) {
+  return (await db.query<{value: Analytics}>('select public.admin_analytics_filtered($1,7,$2,$3,$4,$5) as value', [key, source, list, offset, mode])).rows[0].value;
+}
+test('invite exclusion applies to every aggregate and list, including expired offers; sandbox never excludes', async () => {
+  const db = await database(); try {
+    await db.exec("update private.apple_subscriptions set offer_code_redeemed=true where original_transaction_id in ('1','2','4')");
+    const filtered = await cohort(db);
+    assert.equal(filtered.invite_code_accounts, 1, 'two invite chains still count as one player; sandbox ignored');
+    assert.deepEqual(filtered.summary, {players:1,sessions:1,recordings:1,imports:0,returning_players:0,
+      average_duration_seconds:30,new_accounts:2,new_accounts_with_sessions:1,pro_accounts:0});
+    assert.equal(filtered.daily.reduce((n,d)=>n+d.sessions,0),1);
+    assert.deepEqual(filtered.versions,[{app_version:'1.1.0',players:1}]);
+    assert.deepEqual(filtered.countries,[{country:null,players:1}]);
+    for (const list of ['sessions','players','accounts','pro']) {
+      const excluded=await cohort(db,'exclude_invites',list);
+      assert.ok(excluded.rows.every(r=>r.user_id!==user(1)));
+      const only=await cohort(db,'invites_only',list);
+      assert.ok(only.rows.every(r=>r.user_id===user(1)));
+    }
+    assert.deepEqual((await cohort(db,'all')).summary,(await analytics(db)).summary);
+    assert.equal((await cohort(db,'exclude_invites','accounts')).total,2,'sandbox profile remains included');
+    assert.equal((await cohort(db,'exclude_invites','sessions',0,'gallery')).total,0);
+    await db.exec("update private.apple_subscriptions set status=2,access_until_ms=0 where original_transaction_id in ('1','2')");
+    assert.equal((await cohort(db)).summary.sessions,1,'expiry does not reintroduce tester activity');
+    assert.equal((await player(db,user(1)))!.summary.sessions,2,'underlying history is intact');
+    assert.equal((await cohort(db,'invites_only')).summary.sessions,2);
+  } finally { await db.close(); }
+});
+test('invite-filter pagination and authorization stay scoped', async () => {
+  const db=await database();try {
+    await db.exec("update private.apple_subscriptions set offer_code_redeemed=true where original_transaction_id='1'");
+    for(let n=100;n<130;n++) await db.query(`insert into juggling_sessions(user_id,id,touch_count,duration_ms,source,completed_at,app_version)
+      values($1,$2,1,1000,'recording',now(),'1.2.0')`,[user(2),session(n)]);
+    const pages=await Promise.all([0,25].map(offset=>cohort(db,'exclude_invites','sessions',offset)));
+    assert.deepEqual(pages.map(p=>p.rows.length),[25,6]);assert.ok(pages.every(p=>p.total===31));
+    await assert.rejects(cohort(db,'bad'),/Invalid analytics/);
+    await assert.rejects(cohort(db,'all','sessions',0,'all','wrong'),/Unauthorized/);
+    for(const role of ['anon','authenticated']) {await db.exec(`set role ${role}`);await assert.rejects(cohort(db),/permission denied/);await db.exec('reset role');}
+  } finally {await db.close();}
+});
+test('verified invite marker survives renewals and older events without changing entitlement or ownership', async () => {
+  const db=await database();try {
+    const state={environment:'Production',original_transaction_id:'1',product_id:'com.hewad.juggledude.pro.yearly',
+      status:2,expires_at_ms:1000,access_until_ms:0,signed_at_ms:200};
+    const save=(id:string,s:object)=>db.query('select public.record_apple_subscription($1,$2)',[id,JSON.stringify(s)]);
+    await save(user(1),state);
+    await save(user(1),{...state,status:1,access_until_ms:99999,signed_at_ms:100,offer_code_redeemed:true});
+    const row=()=>db.query<{offer_code_redeemed:boolean;access_until_ms:number}>(`select offer_code_redeemed,access_until_ms from private.apple_subscriptions where original_transaction_id='1'`);
+    assert.equal((await row()).rows[0].offer_code_redeemed,true);assert.equal((await row()).rows[0].access_until_ms,0);
+    await save(user(1),{...state,signed_at_ms:300,offer_code_redeemed:false});
+    assert.equal((await row()).rows[0].offer_code_redeemed,true);
+    await assert.rejects(save(user(2),{...state,offer_code_redeemed:true}),/subscription_already_linked/);
+    await assert.rejects(save(user(4),state),/account_unavailable/);
+  } finally {await db.close();}
 });

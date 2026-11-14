@@ -11,6 +11,7 @@ export const analyticsPlayerSchema = z.object({
   session: z.uuid().optional(),
 }).strict();
 export const analyticsSchema = z.object({
+  cohort: z.enum(['all', 'exclude_invites', 'invites_only']).default('exclude_invites'),
   days: z.enum(['7', '30', '90']).default('7').transform(Number),
   source: z.enum(['all', 'recording', 'gallery']).default('all'),
   list: z.enum(['sessions', 'players', 'accounts', 'pro']).default('sessions'),

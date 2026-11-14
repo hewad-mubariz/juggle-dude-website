@@ -36,9 +36,11 @@ await db.exec(`alter table profiles add column country_code text default 'DE', a
 alter table juggling_sessions add column duration_ms integer default 20000, add column source text default 'recording',
  add column completed_at timestamptz default now(), add column received_at timestamptz default now(), add column app_version text default '1.2.0', add column counter_version text default 'counter-test', add column score_status text default 'device_reported';
 create table private.apple_subscriptions(environment text, original_transaction_id text, user_id uuid, product_id text, status integer,
- access_until_ms bigint, updated_at timestamptz default now());`);
+ access_until_ms bigint, updated_at timestamptz default now(), expires_at_ms bigint default 0, signed_at_ms bigint default 0, primary key(environment,original_transaction_id));`);
 await db.exec(readFileSync(new URL('../../supabase/migrations/202611010001_admin_analytics.sql',import.meta.url),'utf8'));
 await db.exec(readFileSync(new URL('../../supabase/migrations/202611020001_admin_analytics_details.sql',import.meta.url),'utf8'));
+await db.exec(readFileSync(new URL('../../supabase/migrations/202611140000_subscription_offer_codes.sql',import.meta.url),'utf8'));
+await db.exec(readFileSync(new URL('../../supabase/migrations/202611140001_admin_analytics_invites.sql',import.meta.url),'utf8'));
 await db.exec(readFileSync(new URL('../../../kicklab/supabase/migrations/202610260001_automatic_leaderboard_beta.sql',import.meta.url),'utf8'));
 await db.query('update profiles set leaderboard_visible=true where id=$1',[user]);
 const names=['Alex Rivera','Jamie Parker','Sam Keller','Taylor Morgan','Morgan Lee','Robin Fischer','Charlie Rossi','Jordan Silva'];
@@ -49,11 +51,12 @@ for(let i=0;i<names.length;i++){
  for(let n=0;n<32-i;n++) await db.query(`insert into juggling_sessions(user_id,id,touch_count,duration_ms,source,completed_at,app_version)
  values($1,$2,$3,$4,$5,now()-($6::int*interval '1 day')-($7::int*interval '10 minutes'),$8)`,
  [playerID,'60000000-0000-4000-8000-'+String((i+1)*100+n).padStart(12,'0'),20+n*7+i,18000+n*1000,n%3===0?'gallery':'recording',(n+i)%12,n,i%3===0?'1.1.0':'1.2.0']);
- if(i<3)await db.query(`insert into private.apple_subscriptions values('Production',$1,$2,$3,$4,extract(epoch from now()+interval '10 days')*1000,now())`,
+ if(i<3)await db.query(`insert into private.apple_subscriptions(environment,original_transaction_id,user_id,product_id,status,access_until_ms,updated_at) values('Production',$1,$2,$3,$4,extract(epoch from now()+interval '10 days')*1000,now())`,
  [String(i+1),playerID,i===1?'com.hewad.juggledude.pro.monthly':'com.hewad.juggledude.pro.yearly',i===2?4:1]);
 }
 await db.exec(`update juggling_sessions set streak_touches=greatest(1,touch_count-3),streak_start_ms=0,streak_end_ms=duration_ms where streak_touches is null;
 insert into profiles(id,display_name,leaderboard_visible) values('50000000-0000-4000-8000-000000000099','Joined, waiting',true);`);
+await db.exec("update private.apple_subscriptions set offer_code_redeemed=true where original_transaction_id='1'");
 const original=globalThis.fetch;
 globalThis.fetch=async(input,init={})=>{
  const u=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
@@ -66,7 +69,7 @@ globalThis.fetch=async(input,init={})=>{
   }
   if(u.pathname.startsWith('/rest/v1/rpc/')){
    const name=u.pathname.split('/').at(-1),body=JSON.parse(init.body);
-   if(!['admin_analytics','admin_analytics_player','reviewed_juggling_leaderboard'].includes(name)&&!/^admin_review_[a-z_]+$/.test(name))throw new Error('Unexpected fixture RPC');
+   if(!['admin_analytics','admin_analytics_filtered','admin_analytics_player','reviewed_juggling_leaderboard'].includes(name)&&!/^admin_review_[a-z_]+$/.test(name))throw new Error('Unexpected fixture RPC');
    if(process.env.ADMIN_FIXTURE_DELAY_MS && (name.startsWith('admin_analytics')||name==='reviewed_juggling_leaderboard')) await new Promise(resolve=>setTimeout(resolve,Number(process.env.ADMIN_FIXTURE_DELAY_MS)));
    const entries=Object.entries(body),args=entries.map(([k],i)=>`${k} => $${i+1}`).join(',');
    const result=await db.query(`select public.${name}(${args}) as result`,entries.map(([,v])=>typeof v==='object'&&v!==null?JSON.stringify(v):v));

@@ -37,8 +37,8 @@ export async function GET(request:Request,context:Context) {
    const params=new URL(request.url).searchParams;
    const parsed=analyticsSchema.safeParse(Object.fromEntries(params));
    if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid analytics period, source and page.');
-   const {days,source,list,offset}=parsed.data;
-   const data=await rpc<Analytics>('admin_analytics',{p_token:token,p_days:days,p_source:source,p_list:list,p_offset:offset});
+   const {days,source,list,offset,cohort}=parsed.data;
+   const data=await rpc<Analytics>('admin_analytics_filtered',{p_token:token,p_days:days,p_source:source,p_list:list,p_offset:offset,p_cohort:cohort});
    const joined=await participation(data.rows.map(row=>row.user_id));
    return json({...data,rows:data.rows.map(row=>({...row,leaderboard_visible:joined.get(row.user_id)??null}))});
   }

@@ -1,6 +1,7 @@
 export const analyticsDays = [7, 30, 90] as const;
 export type AnalyticsDays = typeof analyticsDays[number];
 export type AnalyticsSource = 'all' | 'recording' | 'gallery';
+export type AnalyticsCohort = 'all' | 'exclude_invites' | 'invites_only';
 export type AnalyticsList = 'sessions' | 'players' | 'accounts' | 'pro';
 export type AnalyticsPlayer = { user_id: string; player: string; country: string | null; leaderboard_visible: boolean | null };
 export type AnalyticsSession = AnalyticsPlayer & {
@@ -27,6 +28,7 @@ export type PlayerDetail = {
   offset: number; sessions: PlayerSession[]; selected_session: PlayerSession | null;
 };
 export type Analytics = {
+  cohort: AnalyticsCohort; invite_code_accounts: number;
   generated_at: string; starts_at: string; timezone: string; days: AnalyticsDays; source: AnalyticsSource; offset: number; total: number;
   summary: { players: number; sessions: number; recordings: number; imports: number; returning_players: number;
     average_duration_seconds: number; new_accounts: number; new_accounts_with_sessions: number; pro_accounts: number };
