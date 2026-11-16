@@ -7,6 +7,7 @@ import { analyticsDays } from '@/lib/admin/analytics';
 import type { Analytics, AnalyticsCohort, AnalyticsDaily, AnalyticsDays, AnalyticsList, AnalyticsSource } from '@/lib/admin/analytics';
 import { LeaderboardStatus } from './leaderboard-status';
 import { PlayerDetails } from './analytics-player';
+import { ReturningPlayers } from './returning-players';
 import { analyticsQuery } from '@/lib/admin/analytics-query';
 import { number, time, day, country, duration } from '@/lib/admin/analytics-format';
 import './analytics.css';
@@ -51,7 +52,7 @@ export function AnalyticsPanel() {
     if (scroll) table.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function open(userId: string, sessionId?: string) { setSelected({ userId, sessionId }); }
-  function refresh() { void cache.invalidateQueries({ queryKey: ['admin-analytics'] }); }
+  function refresh() { void cache.invalidateQueries({ queryKey: ['admin-analytics'] }); void cache.invalidateQueries({ queryKey: ['admin-returns'] }); }
   return <div className="analytics-panel">
     <div className="admin-page-heading analytics-heading">
       <div><p className="admin-kicker">THE BIG PICTURE</p><h1>In play<span>.</span></h1><p>See who’s playing, coming back and making it Pro.</p></div>
@@ -81,6 +82,7 @@ export function AnalyticsPanel() {
         <Stat label="New accounts" value={data.summary.new_accounts} note={`${number(data.summary.new_accounts_with_sessions)} have a synced session · all sources`} onClick={() => choose('accounts', true)} />
         <Stat label="Linked Pro accounts" value={data.summary.pro_accounts} note="Current production access · all dates" onClick={() => choose('pro', true)} />
       </section>
+      <ReturningPlayers key={cohort} cohort={cohort} onOpen={open} />
       <div className="analytics-grid">
         <Activity daily={data.daily} average={data.summary.average_duration_seconds} />
         <section className="analytics-card analytics-breakdowns" aria-label="Player breakdowns">

@@ -11,12 +11,13 @@
     "check:launch": "node scripts/check-launch.mjs",
     "test:admin": "node --import tsx --test scripts/tests/admin.test.ts",
     "test:invites": "node --import tsx --test scripts/tests/invites.test.ts",
+    "test:returns": "node --import tsx --test scripts/tests/returns.test.ts",
     "test:analytics": "node --import tsx --test scripts/tests/analytics.test.ts",
     "admin:hash": "node scripts/hash-admin-password.mjs"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.5",
-    "next": "16.4.2",
+    "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",

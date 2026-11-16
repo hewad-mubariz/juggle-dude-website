@@ -26,6 +26,12 @@ export const analyticsSchema = z.object({
   offset: z.string().regex(/^(0|[1-9][0-9]{0,5})$/).default('0').transform(Number)
     .refine(n => n <= 100000 && n % 25 === 0),
 }).strict();
+export const returnsSchema = z.object({
+  cohort: z.enum(['all', 'exclude_invites', 'invites_only']).default('exclude_invites'),
+  group: z.enum(['returned', 'not_returned', 'no_sessions']).default('returned'),
+  offset: z.string().regex(/^(0|[1-9][0-9]{0,5})$/).default('0').transform(Number)
+    .refine(n => n <= 100000 && n % 25 === 0),
+}).strict();
 export const finishSchema = z.object({
   requestId: z.uuid(),
   choices: z.array(z.object({id: z.string().regex(new RegExp(`^(${momentKinds.join('|')})-[0-9]{1,8}$`)), decision: z.enum(['confirm','reject'])}).strict()).max(2000),

@@ -10,6 +10,7 @@ async function call(path,body,extra={}){
 assert.equal((await call('queue')).status,401);
 assert.equal((await call('invites')).status,401);
 assert.equal((await call('analytics')).status,401);
+assert.equal((await call('analytics/returns')).status,401);
 assert.equal((await call('leaderboard')).status,401);
 assert.equal((await call('analytics/players/20000000-0000-4000-8000-000000000001')).status,401);
 assert.equal((await call('attempts/'+id+'/video')).status,401);
@@ -34,6 +35,19 @@ assert.equal(queue.pending,1);assert.equal(queue.items[0].player_name,'Demo Play
 for (const params of ['days=365','source=other','offset=-1','days=7&days=30','list=arbitrary','sql=select']) {
  assert.equal((await call('analytics?'+params)).status,400);
 }
+for (const params of ['group=bad','cohort=bad','offset=1','group=returned&group=no_sessions','days=7','source=gallery']) assert.equal((await call('analytics/returns?'+params)).status,400);
+const returnsResponse=await call('analytics/returns');
+assert.equal(returnsResponse.status,200);assert.match(returnsResponse.headers.get('cache-control'),/no-store/);
+const returns=await returnsResponse.json();
+assert.ok(returns.summary.returned>0);assert.equal(returns.summary.not_returned,31);assert.ok(returns.summary.no_sessions>0);
+assert.equal(returns.summary.accounts,returns.summary.returned+returns.summary.not_returned+returns.summary.no_sessions);
+assert.ok(returns.rows.every(p=>p.active_days>=2&&typeof p.leaderboard_visible==='boolean'));
+const nonreturns=await (await call('analytics/returns?group=not_returned')).json();
+const nextNonreturns=await (await call('analytics/returns?group=not_returned&offset=25')).json();
+assert.deepEqual([nonreturns.rows.length,nextNonreturns.rows.length],[25,6]);
+assert.equal(new Set([...nonreturns.rows,...nextNonreturns.rows].map(p=>p.user_id)).size,31);
+const onlyReturnInvites=await (await call('analytics/returns?cohort=invites_only')).json();assert.equal(onlyReturnInvites.summary.accounts,1);
+const allReturns=await (await call('analytics/returns?cohort=all')).json();assert.equal(allReturns.summary.accounts,returns.summary.accounts+1);
 const analyticsResponse=await call('analytics?days=30');
 assert.equal(analyticsResponse.status,200);assert.match(analyticsResponse.headers.get('cache-control'),/no-store/);
 const analytics=await analyticsResponse.json();

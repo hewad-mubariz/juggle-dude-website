@@ -2,7 +2,8 @@ import { createHash, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { AdminError, attempt, available, config, cookieName, cookieOptions, failure, json, readJSON, requireSession, rpc, supabase, validateMutation, videoPath } from '@/lib/admin/server';
 import { newToken, passwordMatches, privateKey, sessionHash } from '@/lib/admin/security';
-import { analyticsPlayerSchema, analyticsSchema, finishSchema, idSchema, inviteFindSchema, inviteInventorySchema, inviteMarkSchema, leaderboardSchema, loginSchema } from '@/lib/admin/validation';
+import { analyticsPlayerSchema, analyticsSchema, finishSchema, idSchema, inviteFindSchema, inviteInventorySchema, inviteMarkSchema, leaderboardSchema, loginSchema, returnsSchema } from '@/lib/admin/validation';
+import type { PlayerReturns } from '@/lib/admin/returns';
 import type { InviteCode, InviteInventory } from '@/lib/admin/invites';
 import { leaderboard, participation } from '@/lib/admin/leaderboard-server';
 import type { Analytics, PlayerDetail } from '@/lib/admin/analytics';
@@ -17,6 +18,15 @@ export async function GET(request:Request,context:Context) {
   const token=await requireSession();
   const {path}=await context.params;
   if(path.join('/')==='session') return json({email:config().email});
+  if(path.join('/')==='analytics/returns') {
+   const params=new URL(request.url).searchParams;
+   const parsed=returnsSchema.safeParse(Object.fromEntries(params));
+   if(!parsed.success||Array.from(params.keys()).some(key=>params.getAll(key).length!==1)) throw new AdminError(400,'Choose a valid return group and page.');
+   const {cohort,group,offset}=parsed.data;
+   const data=await rpc<PlayerReturns>('admin_analytics_returns',{p_token:token,p_cohort:cohort,p_group:group,p_offset:offset});
+   const joined=await participation(data.rows.map(row=>row.user_id));
+   return json({...data,rows:data.rows.map(row=>({...row,leaderboard_visible:joined.get(row.user_id)??null}))});
+  }
   if(path.join('/')==='invites') {
    const params=new URL(request.url).searchParams;
    const parsed=inviteInventorySchema.safeParse(Object.fromEntries(params));

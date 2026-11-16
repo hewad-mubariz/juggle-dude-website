@@ -41,6 +41,7 @@ await db.exec(readFileSync(new URL('../../supabase/migrations/202611010001_admin
 await db.exec(readFileSync(new URL('../../supabase/migrations/202611020001_admin_analytics_details.sql',import.meta.url),'utf8'));
 await db.exec(readFileSync(new URL('../../supabase/migrations/202611140000_subscription_offer_codes.sql',import.meta.url),'utf8'));
 await db.exec(readFileSync(new URL('../../supabase/migrations/202611140001_admin_analytics_invites.sql',import.meta.url),'utf8'));
+await db.exec(readFileSync(new URL('../../supabase/migrations/20261116220629_admin_player_returns.sql',import.meta.url),'utf8'));
 await db.exec(readFileSync(new URL('../../../kicklab/supabase/migrations/202610260001_automatic_leaderboard_beta.sql',import.meta.url),'utf8'));
 await db.query('update profiles set leaderboard_visible=true where id=$1',[user]);
 const names=['Alex Rivera','Jamie Parker','Sam Keller','Taylor Morgan','Morgan Lee','Robin Fischer','Charlie Rossi','Jordan Silva'];
@@ -60,6 +61,11 @@ await db.exec("update private.apple_subscriptions set offer_code_redeemed=true w
 await db.exec(readFileSync(new URL('../../supabase/migrations/202611140002_admin_invite_inventory.sql',import.meta.url),'utf8'));
 await db.exec(`insert into private.admin_invite_batches(id,label,plan,expires_at) values('100','Monthly tester invite','monthly',now()+interval '15 days'),('200','Yearly tester invite','yearly',now()+interval '15 days');`);
 for(let i=1;i<=60;i++)await db.query('insert into private.admin_invite_codes(batch_id,code,ordinal) values($1,$2,$3)',[i<=30?'100':'200','FAKECODE'+String(i).padStart(10,'0'),i<=30?i:i-30]);
+for(let i=1;i<=30;i++) {
+ const uid='71000000-0000-4000-8000-'+String(i).padStart(12,'0');
+ await db.query("insert into profiles(id,display_name,country_code,created_at,leaderboard_visible) values($1,$2,'DE',now()-interval '15 days',false)",[uid,`First visit ${i}`]);
+ await db.query("insert into juggling_sessions(user_id,id,touch_count,duration_ms,source,completed_at,app_version) values($1,$2,5,8000,'recording',now()-interval '14 days','1.2.0')",[uid,uid]);
+}
 const original=globalThis.fetch;
 globalThis.fetch=async(input,init={})=>{
  const u=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);
@@ -72,7 +78,7 @@ globalThis.fetch=async(input,init={})=>{
   }
   if(u.pathname.startsWith('/rest/v1/rpc/')){
    const name=u.pathname.split('/').at(-1),body=JSON.parse(init.body);
-   if(!['admin_analytics','admin_analytics_filtered','admin_analytics_player','reviewed_juggling_leaderboard'].includes(name)&&!/^admin_review_[a-z_]+$/.test(name)&&!['admin_invite_inventory','admin_invite_find','admin_invite_copy','admin_invite_mark'].includes(name))throw new Error('Unexpected fixture RPC');
+   if(!['admin_analytics','admin_analytics_filtered','admin_analytics_returns','admin_analytics_player','reviewed_juggling_leaderboard'].includes(name)&&!/^admin_review_[a-z_]+$/.test(name)&&!['admin_invite_inventory','admin_invite_find','admin_invite_copy','admin_invite_mark'].includes(name))throw new Error('Unexpected fixture RPC');
    if(process.env.ADMIN_FIXTURE_DELAY_MS && (name.startsWith('admin_analytics')||name==='reviewed_juggling_leaderboard')) await new Promise(resolve=>setTimeout(resolve,Number(process.env.ADMIN_FIXTURE_DELAY_MS)));
    const entries=Object.entries(body),args=entries.map(([k],i)=>`${k} => $${i+1}`).join(',');
    const result=await db.query(`select public.${name}(${args}) as result`,entries.map(([,v])=>typeof v==='object'&&v!==null?JSON.stringify(v):v));
